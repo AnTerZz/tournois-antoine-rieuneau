@@ -4,7 +4,7 @@ from django.db import models
 
 class Tournament(models.Model):
     name = models.CharField(max_length=200)
-    location = models.CheckConstraint(max_length=200)
+    location = models.CharField(max_length=200)
     nPoules = models.IntegerField()
     nTeamsInPoule = models.IntegerField()
     def __str__(self):

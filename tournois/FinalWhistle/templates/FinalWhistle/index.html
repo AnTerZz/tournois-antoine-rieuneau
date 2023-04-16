@@ -18,10 +18,10 @@
         <div class="container"><img class="img-fluid" data-bss-hover-animate="bounce" src="{% static 'FinalWhistle/assets/img/logocolours.png'%}" width="146" height="77" style="margin-bottom: 14px;width: 150px;"><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link active" href="index.html">Tournois</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{% url 'FinalWhistle:index' %}">Tournois</a></li>
                     <li class="nav-item"><a class="nav-link" href="matchs.html">Matchs</a></li>
                     <li class="nav-item"><a class="nav-link" href="teams.html">Equipes</a></li>
-                </ul><a class="btn btn-primary shadow" role="button" href="login.html">Connexion</a>
+                </ul><a class="btn btn-primary shadow" role="button" href="{% url 'login' %}?next={% url 'FinalWhistle:index' %}">Connexion</a>
             </div>
         </div>
     </nav>
@@ -46,24 +46,38 @@
     </header>
 
 
-    
 
     {% if tournament_list %}
         <section>
             <div class="container text-center py-4 py-xl-5">
-                {% for tournament in tournament_list %}
+                {% for tournament in tournament_list|slice:":3" %}
                     <div class="col-md-12 col-lg-12 offset-lg-0" style="border-radius: 20px;padding: 0;margin-bottom: 3px;border: 2px solid var(--bs-yellow);background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
                         <h1 class="text-center" style="font-family: Raleway, sans-serif;color: var(--bs-indigo);">{{tournament.name}}</h1>
                         <p class="text-center">Lieu : {{tournament.location}}</p>
                         <p class="text-center" style="margin-top: -21px;">Date : 24/02/2024 au 25/02/2024</p>
                     </div>
                 {% endfor %}
-                </div><button class="btn btn-outline-primary text-center" type="button" style="margin-top: 15px;">Voir plus</button>
+
+                
+                <div><a class="btn btn-outline-primary" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-1" href="#collapse-1" role="button" style="margin-top: 37px;margin-bottom: 17px;">Voir plus</a>
+                    <div class="collapse" id="collapse-1">
+                        {% for tournament in tournament_list|slice:"3:" %}
+                            <div class="col-md-12 col-lg-12 offset-lg-0" style="border-radius: 20px;padding: 0;margin-bottom: 3px;border: 2px solid var(--bs-yellow);background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
+                                <h1 class="text-center" style="font-family: Raleway, sans-serif;color: var(--bs-indigo);margin-bottom: -2px;margin-top: 10px;">{{tournament.name}}</h1>
+                                <p class="text-center">Lieu : {{tournament.location}}</p>
+                                <p class="text-center" style="margin-top: -21px;">Date : 24/02/2024 au 25/02/2024</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+
             </div>
         </section>
     {% else %}
         <p>There are no more Tournaments</p>
     {% endif %}
+
 
     <section></section>
     <section></section>
@@ -87,7 +101,7 @@
                     <h2 class="fw-bold text-warning mb-2">Envie de donner votre avis sur un match ?</h2>
                     <p class="mb-0">Connectez-vous et accedez a la page de votre match favori !</p>
                 </div>
-                <div class="my-2"><a class="btn btn-light fs-5 py-2 px-4" role="button" href="contacts.html">Connexion</a></div>
+                <div class="my-2"><a class="btn btn-light fs-5 py-2 px-4" role="button" href="{% url 'login' %}">Connexion</a></div>
             </div>
             <hr>
         </div>
@@ -97,7 +111,7 @@
             <footer class="text-center">
                 <div class="container text-muted py-4 py-lg-5">
                     <ul class="list-inline">
-                        <li class="list-inline-item me-4"><a class="link-secondary" href="http://github.io/AnTerZz">Projects</a></li>
+                        <li class="list-inline-item me-4"><a class="link-secondary" href="http://github.io/AnTerZz">Projets</a></li>
                         <li class="list-inline-item me-4"><a class="link-secondary" href="http://twitter.com/antoinerieuneau">Twitter</a></li>
                         <li class="list-inline-item"><a class="link-secondary" href="mailto:antoine@rieuneau.com">Email</a></li>
                     </ul>

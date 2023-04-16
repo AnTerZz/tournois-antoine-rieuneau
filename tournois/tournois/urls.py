@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('FinalWhistle/', include('FinalWhistle.urls')),
     path('', views.IndexView.as_view()),
+    path('accounts/', include('django.contrib.auth.urls'))
 ]

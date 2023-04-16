@@ -10,9 +10,6 @@ if (window.innerWidth < 768) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-	if ('AOS' in window) {
-		AOS.init();
-	}
 
 	var hoverAnimationTriggerList = [].slice.call(document.querySelectorAll('[data-bss-hover-animate]'));
 	var hoverAnimationList = hoverAnimationTriggerList.forEach(function (hoverAnimationEl) {

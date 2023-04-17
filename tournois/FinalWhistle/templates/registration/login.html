@@ -34,14 +34,22 @@
             <div class="row">
                 <div class="col-md-6 text-center"><img class="img-fluid w-100" src="{% static 'FinalWhistle/assets/img/illustrations/loginpage.png'%}"></div>
                 <div class="col-md-5 col-xl-4 text-center text-md-start">
-                    <h2 class="display-6 fw-bold mb-5"><span class="underline pb-1"><strong>Login</strong><br></span></h2>
+                    <h2 class="display-6 fw-bold mb-5"><span class="underline pb-1"><strong>Connexion</strong><br></span></h2>
                     <form method="post" action="{% url 'login' %}">
                         {% csrf_token %}
-                        {{form}}
-                        <!--- div class="mb-3"><input class="shadow form-control" type="email" name="username" placeholder="Nom d'Utilisateur"></div>
-                        <div class="mb-3"><input class="shadow form-control" type="password" name="password" placeholder="Mot de passe"></div> -->
-                        <div class="mb-5"><button class="btn btn-primary shadow" type="submit">Se Connecter</button></div>
-                        <input type="hidden" name="next" value="{{ next }}">
+                        {% if next %}
+                            <input type="hidden" name="next" value="{{ next }}" />
+                        {% endif %}
+                        <div class="mb-3">
+                            <input class="shadow form-control" type="text" id="username" name="username"  placeholder="Nom d'utilisateur">
+                        </div>
+                        <div class="mb-3">
+                            <input class="shadow form-control" type="password" name="password" id="password" placeholder="Mot de passe">
+                        </div>
+    
+                        <div class="mb-5">
+                            <button class="btn btn-primary shadow" type="submit" class="btn">Se Connecter</button>
+                        </div>
                         <p class="text-muted"></p>
                     </form>
                 </div>

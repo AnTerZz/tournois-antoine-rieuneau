@@ -21,7 +21,7 @@
                     <li class="nav-item"><a class="nav-link" href="teams.html">Equipes</a></li>
                 </ul>
                 {% if user.is_authenticated %}
-                    <!--{{ user.username }}!--> 
+                    <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
                     <a class="btn btn-outline-primary shadow" role="button" href="{% url 'logout' %}?next={% url 'FinalWhistle:index' %}">Déconnexion</a>
                 {% else %}
                     <a class="btn btn-primary shadow" role="button" href="{% url 'login' %}?next={% url 'FinalWhistle:index' %}">Connexion</a>

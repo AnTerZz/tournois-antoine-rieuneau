@@ -24,3 +24,5 @@ urlpatterns = [
     path('', views.IndexView.as_view()),
     path('accounts/', include('django.contrib.auth.urls'))
 ]
+handler404 = 'FinalWhistle.views.custom_404'
+handler500 = 'FinalWhistle.views.custom_500'

@@ -107,7 +107,11 @@
                     <h2 class="fw-bold text-warning mb-2">Envie de donner votre avis sur un match ?</h2>
                     <p class="mb-0">Connectez-vous et accedez a la page de votre match favori !</p>
                 </div>
-                <div class="my-2"><a class="btn btn-light fs-5 py-2 px-4" role="button" href="{% url 'login' %}">Connexion</a></div>
+                {% if user.is_authenticated %}
+                    <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Connecté : {{ user.username }}</p>
+                {% else %}
+                    <div class="my-2"><a class="btn btn-light fs-5 py-2 px-4" role="button" href="{% url 'login' %}?next={% url 'FinalWhistle:index' %}">Connexion</a></div>
+                {% endif %}
             </div>
             <hr>
         </div>

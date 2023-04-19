@@ -45,7 +45,6 @@ class Game(models.Model):
     location = models.CharField(max_length=200)
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_games')
     away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_games')
-    #poule = models.ForeignKey(Poule, on_delete=models.CASCADE, related_name='games')
     poule = models.ForeignKey(Poule, on_delete=models.CASCADE)
     score = models.CharField(max_length=200)
     nPoule = models.IntegerField()

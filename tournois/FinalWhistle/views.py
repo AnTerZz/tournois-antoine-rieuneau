@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Tournament, Poule
+from .models import Tournament, Poule, Game
 from django.views import generic
 class IndexView(generic.ListView):
     template_name = 'FinalWhistle/index.html'
@@ -21,3 +21,9 @@ class PouleView(generic.DetailView):
     #context_object_name="poule_list"
     def get_queryset(self):
         return Tournament.objects.order_by('name')
+    
+class MatchView(generic.DetailView):
+    template_name = 'FinalWhistle/match.html'
+    #context_object_name="poule_list"
+    def get_queryset(self):
+        return Game.objects.order_by('id')

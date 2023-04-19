@@ -6,13 +6,17 @@ from .models import Tournament, Poule, Team, Game
 class GameInline(admin.TabularInline):
     model = Game
     extra = 1
+    
+class TeamInline(admin.TabularInline):
+    model = Team
+    extra = 1
 
 
 class PouleAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['number']}),
     ]
-    inlines = [GameInline]
+    inlines = [GameInline,TeamInline]
     #list_display = ('poule','number')
     list_filter = ['number']
     search_fields = ['number']

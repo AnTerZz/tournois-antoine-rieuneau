@@ -50,3 +50,7 @@ class Game(models.Model):
     nPoule = models.IntegerField()
     def __date__(self):
         return self.date
+    def score1_as_list(self):
+        return self.score.split(',')[0]
+    def score2_as_list(self):
+        return self.score.split(',')[1]

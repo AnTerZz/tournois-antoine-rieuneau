@@ -16,9 +16,9 @@
         <div class="container"><img class="img-fluid" data-bss-hover-animate="bounce" src="{% static 'FinalWhistle/assets/img/logocolours.png'%}" width="146" height="77" style="margin-bottom: 14px;width: 150px;"><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Tournois</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="poule.html">Poules</a></li>
-                    <li class="nav-item"><a class="nav-link" href="teams.html">Equipes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:index' %}">Tournoi</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="">Poules</a></li>
+
                 </ul>
                 {% if user.is_authenticated %}
                     <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
@@ -79,7 +79,7 @@
                     <div class="col">
                         <div>
                             {% for game in poule.game_set.all %}
-                                <div class="col"><a class="link-primary" href="#" style="font-weight: bold;font-size: 24px;color: var(--bs-blue);"><span style="font-size: 32px;color: rgb(0,0,0);">0&nbsp;</span>{{game.home_team}} - {{game.away_team}}</a><span style="font-weight: bold;font-size: 32px;color: rgb(0,0,0);">&nbsp;0</span>
+                                <div class="col"><a class="link-primary" href="{% url 'FinalWhistle:match' game.id %}" style="font-weight: bold;font-size: 24px;color: var(--bs-blue);"><span style="font-size: 32px;color: rgb(0,0,0);">0&nbsp;</span>{{game.home_team}} - {{game.away_team}}</a><span style="font-weight: bold;font-size: 32px;color: rgb(0,0,0);">&nbsp;0</span>
                                     <p><span style="font-weight: bold;">Lieu :&nbsp;</span>{{game.location}}</p>
                                     <p style="margin-top: -23px;"><span style="font-weight: bold;">Date :&nbsp;</span>{{game.date}}</p>
                                 </div>

@@ -16,9 +16,9 @@
         <div class="container"><img class="img-fluid" data-bss-hover-animate="bounce" src="{% static 'FinalWhistle/assets/img/logocolours.png'%}" width="146" height="77" style="margin-bottom: 14px;width: 150px;"><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Tournois</a></li>
-                    <li class="nav-item"><a class="nav-link" href="poule.html">Matchs</a></li>
-                    <li class="nav-item"><a class="nav-link" href="teams.html">Equipes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:index' %}">Tournoi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:poule' game.poule.tournament.id%}">Poules</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="">Equipes</a></li>
                 </ul>
                 {% if user.is_authenticated %}
                     <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
@@ -31,17 +31,17 @@
     </nav><section class="py-4 py-md-5 my-5">
     <div class="row" style="text-align: center;margin-top: 45px;background: var(--bs-link-hover-color);">
         <div class="col">
-            <h1 style="color: var(--bs-yellow);font-weight: bold;">0 {{game.home_team}} - {{game.away_team}} 0</h1>
+            <h1 style="color: var(--bs-yellow);font-weight: bold;">{{game.score1_as_list}} {{game.home_team}} - {{game.away_team}} {{game.score2_as_list}}</h1>
         </div>
     </div>
     <div class="container py-md-5" style="text-align: center;">
         <div class="row" style="text-align: center;">
             <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5 text-center text-md-start">
                 <h2 class="display-6 fw-bold mb-5" style="text-align: center;margin-top: 29px;"><span class="underline pb-1" style="text-align: center;font-size: 30.89px;"></span></h2>
-                <p style="text-align: center;margin-bottom: 15px;">Lieu : {{game.location}}</p>
-                <p style="text-align: center;margin-bottom: 15px;">Date : {{game.date}}</p>
-                <p style="text-align: center;margin-bottom: 15px;">Tournoi :</p>
-                <p style="text-align: center;margin-bottom: 0px;">Poule : {{game.poule}}</p>
+                <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Lieu : </span>{{game.location}}</p>
+                <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Date :</span> {{game.date}}</p>
+                <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Tournoi : </span>{{game.poule.tournament}}</p>
+                <p style="text-align: center;margin-bottom: 0px;"><span style="font-weight: bold;">Poule :</span> {{game.poule}}</p>
             </div>
             <div class="col-md-6 text-center"><img class="img-fluid w-100" src="{% static 'FinalWhistle/assets/img/illustrations/match2.png'%}" /></div>
         </div>
@@ -53,7 +53,7 @@
         <div class="row" style="text-align: center;margin-top: 0px;background: #eefdff;">
             <div class="col">
                 <p style="font-size: 23px;"><span style="font-weight: bold;">Entraineur</span> : {{game.home_team.manager}}</p>
-                <p style="font-size: 21px;">Player 1, Player 2, Player 3, Player 4, Player 5, Player 6, Player 7, Player 8, Player 9, Player 10, Player 11, Player 12, Player 13</p>
+                <p style="font-size: 21px;">{{game.home_team.players}}</p>
             </div>
         </div>
         <div class="row" style="text-align: center;margin-top: 45px;background: rgb(36,40,91);">
@@ -64,7 +64,7 @@
         <div class="row" style="text-align: center;margin-top: 0px;background: #eefdff;">
             <div class="col">
                 <p style="font-size: 23px;"><span style="font-weight: bold;">Entraineur</span> : {{game.away_team.manager}}</p>
-                <p style="font-size: 21px;">Player 1, Player 2, Player 3, Player 4, Player 5, Player 6, Player 7, Player 8, Player 9, Player 10, Player 11, Player 12, Player 13</p>
+                <p style="font-size: 21px;">{{game.away_team.players}}</p>
             </div>
         </div>
     </div>

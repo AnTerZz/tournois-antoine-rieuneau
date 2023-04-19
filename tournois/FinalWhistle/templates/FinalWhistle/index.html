@@ -18,9 +18,8 @@
         <div class="container"><img class="img-fluid" data-bss-hover-animate="bounce" src="{% static 'FinalWhistle/assets/img/logocolours.png'%}" width="146" height="77" style="margin-bottom: 14px;width: 150px;"><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link active" href="{% url 'FinalWhistle:index' %}">Tournois</a></li>
-                    <li class="nav-item"><a class="nav-link" href="matchs.html">Matchs</a></li>
-                    <li class="nav-item"><a class="nav-link" href="teams.html">Equipes</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="{% url 'FinalWhistle:index' %}">Tournoi</a></li>
+                    
                 </ul>
                 {% if user.is_authenticated %}
                     <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>

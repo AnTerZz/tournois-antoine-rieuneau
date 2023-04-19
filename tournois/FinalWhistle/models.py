@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 
 class Tournament(models.Model):
@@ -54,3 +54,18 @@ class Game(models.Model):
         return self.score.split(',')[0]
     def score2_as_list(self):
         return self.score.split(',')[1]
+    
+class Comment(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.TextField()
+    class Meta:
+        ordering = ['date']
+
+    def __str__(self):
+        return 'Comment {} by {}'.format(self.body, self.user)
+    
+    
+    
+    

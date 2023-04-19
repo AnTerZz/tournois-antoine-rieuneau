@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Tournament, Poule, Team, Game
+from .models import Tournament, Poule, Team, Game, Comment
 
 
 
@@ -21,6 +21,11 @@ class PouleAdmin(admin.ModelAdmin):
     list_filter = ['number']
     search_fields = ['number']
 
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'body', 'game', 'date')
+    #list_filter = ('date')
+    search_fields = ('user', 'body')
 
 
 

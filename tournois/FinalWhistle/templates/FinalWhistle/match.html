@@ -28,49 +28,89 @@
                 {% endif %}
             </div>
         </div>
-    </nav><section class="py-4 py-md-5 my-5">
-    <div class="row" style="text-align: center;margin-top: 45px;background: var(--bs-link-hover-color);">
-        <div class="col">
-            <h1 style="color: var(--bs-yellow);font-weight: bold;">{{game.score1_as_list}} {{game.home_team}} - {{game.away_team}} {{game.score2_as_list}}</h1>
-        </div>
-    </div>
-    <div class="container py-md-5" style="text-align: center;">
-        <div class="row" style="text-align: center;">
-            <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5 text-center text-md-start">
-                <h2 class="display-6 fw-bold mb-5" style="text-align: center;margin-top: 29px;"><span class="underline pb-1" style="text-align: center;font-size: 30.89px;"></span></h2>
-                <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Lieu : </span>{{game.location}}</p>
-                <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Date :</span> {{game.date}}</p>
-                <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Tournoi : </span>{{game.poule.tournament}}</p>
-                <p style="text-align: center;margin-bottom: 0px;"><span style="font-weight: bold;">Poule :</span> {{game.poule}}</p>
-            </div>
-            <div class="col-md-6 text-center"><img class="img-fluid w-100" src="{% static 'FinalWhistle/assets/img/illustrations/match2.png'%}" /></div>
-        </div>
-        <div class="row" style="text-align: center;margin-top: 45px;background: rgb(36,40,91);">
+    </nav>
+    <section class="py-4 py-md-5 my-5">
+        <div class="row" style="text-align: center;margin-top: 45px;background: var(--bs-link-hover-color);">
             <div class="col">
-                <h1 style="color: var(--bs-yellow);font-weight: bold;">{{game.home_team}}</h1>
+                <h1 style="color: var(--bs-yellow);font-weight: bold;">{{game.score1_as_list}} {{game.home_team}} - {{game.away_team}} {{game.score2_as_list}}</h1>
             </div>
         </div>
-        <div class="row" style="text-align: center;margin-top: 0px;background: #eefdff;">
-            <div class="col">
-                <p style="font-size: 23px;"><span style="font-weight: bold;">Entraineur</span> : {{game.home_team.manager}}</p>
-                <p style="font-size: 21px;">{{game.home_team.players}}</p>
+        <div class="container py-md-5" style="text-align: center;">
+            <div class="row" style="text-align: center;">
+                <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5 text-center text-md-start">
+                    <h2 class="display-6 fw-bold mb-5" style="text-align: center;margin-top: 29px;"><span class="underline pb-1" style="text-align: center;font-size: 30.89px;"></span></h2>
+                    <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Lieu : </span>{{game.location}}</p>
+                    <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Date :</span> {{game.date}}</p>
+                    <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Tournoi : </span>{{game.poule.tournament}}</p>
+                    <p style="text-align: center;margin-bottom: 0px;"><span style="font-weight: bold;">Poule :</span> {{game.poule}}</p>
+                </div>
+                <div class="col-md-6 text-center"><img class="img-fluid w-100" src="{% static 'FinalWhistle/assets/img/illustrations/match2.png'%}" /></div>
+            </div>
+            <div class="row" style="text-align: center;margin-top: 45px;background: rgb(36,40,91);">
+                <div class="col">
+                    <h1 style="color: var(--bs-yellow);font-weight: bold;">{{game.home_team}}</h1>
+                </div>
+            </div>
+            <div class="row" style="text-align: center;margin-top: 0px;background: #eefdff;">
+                <div class="col">
+                    <p style="font-size: 23px;"><span style="font-weight: bold;">Entraineur</span> : {{game.home_team.manager}}</p>
+                    <p style="font-size: 21px;">{{game.home_team.players}}</p>
+                </div>
+            </div>
+            <div class="row" style="text-align: center;margin-top: 45px;background: rgb(36,40,91);">
+                <div class="col">
+                    <h1 style="color: var(--bs-yellow);font-weight: bold;">{{game.away_team}}</h1>
+                </div>
+            </div>
+            <div class="row" style="text-align: center;margin-top: 0px;background: #eefdff;">
+                <div class="col">
+                    <p style="font-size: 23px;"><span style="font-weight: bold;">Entraineur</span> : {{game.away_team.manager}}</p>
+                    <p style="font-size: 21px;">{{game.away_team.players}}</p>
+                </div>
             </div>
         </div>
-        <div class="row" style="text-align: center;margin-top: 45px;background: rgb(36,40,91);">
-            <div class="col">
-                <h1 style="color: var(--bs-yellow);font-weight: bold;">{{game.away_team}}</h1>
-            </div>
-        </div>
-        <div class="row" style="text-align: center;margin-top: 0px;background: #eefdff;">
-            <div class="col">
-                <p style="font-size: 23px;"><span style="font-weight: bold;">Entraineur</span> : {{game.away_team.manager}}</p>
-                <p style="font-size: 21px;">{{game.away_team.players}}</p>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
-    <footer style="margin-top: -125px;">
+
+
+    <section style="margin-top: -87px;margin-bottom: 48px;">
+        <div class="container" style="text-align: center;">
+            {% if user.is_authenticated %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <h1 style="height: 50.25px;font-size: 26.88px;">Commentez le match !</h1>
+                        <textarea name="body" style="width: 700px;height: 86.5938px;margin-right: 27px;margin-bottom: 31px;" placeholder="Ecrivez un nouveau commentaire..."></textarea>
+                        <button style="margin-top: -140px;" class="btn btn-primary" type="submit">Publier</button>
+                    </div>
+                </form>
+            {% else %}
+                <div class="text-white bg-primary border rounded border-0 border-primary d-flex flex-column justify-content-between flex-lg-row p-4 p-md-5" style="margin-bottom: 47px;">
+                    <div class="pb-2 pb-lg-1">
+                        <h2 class="fw-bold text-warning mb-2">Envie de donner votre avis sur un match ?</h2>
+                        <p class="mb-0">Connectez vous pour pouvoir le faire !</p>
+                    </div>
+                    <div class="my-2"><a class="btn btn-light fs-5 py-2 px-4" role="button" href="{% url 'login' %}?next={% url 'FinalWhistle:index' %}">Connexion</a></div>
+                </div>
+            {% endif %}
+
+
+
+
+
+            
+            {% for comment in comments %}
+                <div class="col" style="width: 800px;margin: auto;">
+                    <h1 style="text-align: left;color: var(--bs-indigo);font-weight: bold;font-size: 24.89px;">{{comment.user}}<span style="margin-left: 12px;color: var(--bs-gray);font-size: 16.89px;text-align: center;">{{comment.date}}<span style="margin-left: 11px;font-size: 12.89px;color: var(--bs-red);">edit</span></span></h1>
+                    <p style="text-align: left;">{{comment.body}}</p>
+                    <hr>
+                </div>
+            {%endfor%}
+        </div>
+    </section>
+
+
+    <footer style="margin-top: -25px;">
         <div class="container py-4 py-lg-5">
             <footer class="text-center">
                 <hr>

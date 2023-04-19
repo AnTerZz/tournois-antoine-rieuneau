@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
 from .models import Tournament, Poule, Game, Comment
 from django.views import generic
 class IndexView(generic.ListView):
@@ -44,4 +45,19 @@ class MatchView(generic.DetailView):
         new_comment.save()
         return self.get(self, request, *args, **kwargs)
 
+
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+class EditCommentView(LoginRequiredMixin, generic.UpdateView):
+    model = Comment
+    fields = ['body']
+    template_name = 'FinalWhistle/edit_comment.html'
+    success_url = reverse_lazy('FinalWhistle:index')
+
+    def get_success_url(self):
+        return reverse('FinalWhistle:match', args=[self.object.game.pk])
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
     

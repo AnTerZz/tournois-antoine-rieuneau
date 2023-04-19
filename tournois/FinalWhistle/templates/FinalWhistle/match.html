@@ -101,7 +101,14 @@
             
             {% for comment in comments %}
                 <div class="col" style="width: 800px;margin: auto;">
-                    <h1 style="text-align: left;color: var(--bs-indigo);font-weight: bold;font-size: 24.89px;">{{comment.user}}<span style="margin-left: 12px;color: var(--bs-gray);font-size: 16.89px;text-align: center;">{{comment.date}}<span style="margin-left: 11px;font-size: 12.89px;color: var(--bs-red);">edit</span></span></h1>
+                    <h1 style="text-align: left;color: var(--bs-indigo);font-weight: bold;font-size: 24.89px;">{{comment.user}}<span style="margin-left: 12px;color: var(--bs-gray);font-size: 16.89px;text-align: center;">{{comment.date}}
+                        <!--<span style="margin-left: 11px;font-size: 12.89px;color: var(--bs-red);">edit</span>-->
+                    
+                    {% if user == comment.user %}
+                        <a href="{% url 'FinalWhistle:edit_comment' comment.id %}" style="margin-left: 11px;font-size: 12.89px;color: var(--bs-red);">edit</a>
+                    {% endif %}
+                    
+                    </span></h1>
                     <p style="text-align: left;">{{comment.body}}</p>
                     <hr>
                 </div>

@@ -6,7 +6,8 @@ from . import views
 app_name = 'FinalWhistle'
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
-    path('<int:pk>/', views.PouleView.as_view(), name='poule'),
+    path('tournois/', views.IndexView.as_view(), name='index'),
+    path('tournois/<int:pk>/', views.PouleView.as_view(), name='poule'),
     path('match/<int:pk>', views.MatchView.as_view(), name='match'),
     path('comment/<int:pk>/edit/', views.EditCommentView.as_view(), name='edit_comment'),
 ]

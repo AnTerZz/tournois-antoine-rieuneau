@@ -15,6 +15,10 @@ class CommentInline(admin.TabularInline):
     model = Comment
     extra = 1
 
+class PouleInline(admin.TabularInline):
+    model = Poule
+    extra = 1
+
 
 class PouleAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -34,9 +38,8 @@ class GameAdmin(admin.ModelAdmin):
     inlines=[CommentInline]
     list_display = ('date', 'location', 'home_team', 'away_team','poule','home_score','away_score')
     search_fields = ('location', 'home_team','away_team','poule')
+    
 
-
-# Register your models here.
 admin.site.register(Tournament)
 admin.site.register(Team)
 admin.site.register(Game, GameAdmin)

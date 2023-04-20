@@ -34,10 +34,11 @@
             <div class="row" style="text-align: center;">
                 <div class="col-md-6 text-center"><img class="img-fluid w-100" src="{% static 'FinalWhistle/assets/img/illustrations/matchedit.png'%}"></div>
                 <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5 text-center text-md-start shake animated">
-                    <h2 class="display-6 fw-bold mb-5" style="text-align: center;margin-top: 29px;"><span class="shake animated underline pb-1" style="text-align: center;">{{tournament.name}}</span></h2>
+                    <h2 class="display-6 fw-bold mb-5" style="text-align: center;margin-top: 20px;"><span class="shake animated underline pb-1" style="text-align: center;">{{tournament.name}}</span></h2>
                     <p style="text-align: center;">Lieu : {{tournament.location}}</p>
-                    <p style="text-align: center;">Dates : 24/02/2023 - 22/04/2023</p>
-                    <p style="text-align: center;">Nombre d'équipes : {{tournament.nTeamsInPoule}}</p>
+                    <p style="text-align: center;">Dates : {{tournament.date_start}} - {{tournament.date_end}}</p>
+                    <p style="text-align: center;">Nombre de poules: {{tournament.nPoules}}</p>
+                    <p style="text-align: center;">Nombre d'équipes par poules: {{tournament.nTeamsInPoule}}</p>
                 </div>
             </div>
 

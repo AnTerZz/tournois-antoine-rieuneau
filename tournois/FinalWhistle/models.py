@@ -55,7 +55,6 @@ class Game(models.Model):
     poule = models.ForeignKey(Poule, on_delete=models.CASCADE)
     home_score = models.IntegerField()
     away_score = models.IntegerField()
-    nPoule = models.IntegerField()
     def __date__(self):
         return self.date
     

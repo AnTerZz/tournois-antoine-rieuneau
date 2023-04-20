@@ -1,7 +1,8 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
-from .models import Tournament, Poule, Game, Comment
+from .models import Tournament, Poule, Game, Comment, Team
 from django.views import generic
+from . import models
 class IndexView(generic.ListView):
     template_name = 'FinalWhistle/index.html'
     context_object_name = 'tournament_list'
@@ -23,8 +24,8 @@ class PouleView(generic.DetailView):
     def get_queryset(self):
         return Tournament.objects.order_by('name')
     def teams_view(request):
-    teams = Team.objects.annotate(total_points=models.ExpressionWrapper(models.F('home_points') + models.F('away_points'), output_field=models.IntegerField())).order_by('-total_points')
-    return render(request, 'teams.html', {'teams': teams})
+        teams = Team.objects.annotate(total_points=models.ExpressionWrapper(models.F('home_points') + models.F('away_points'), output_field=models.IntegerField())).order_by('-total_points')
+        return render(request, 'teams.html', {'teams': teams})
     
 class MatchView(generic.DetailView):
     template_name = 'FinalWhistle/match.html'

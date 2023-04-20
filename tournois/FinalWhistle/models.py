@@ -2,6 +2,8 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.forms import IntegerField
+from django.db.models import F
 
 class Tournament(models.Model):
     name = models.CharField(max_length=200)
@@ -30,24 +32,20 @@ class Team(models.Model):
         return self.players.split(',')
     def __str__(self):
         return self.name
-    def total_points(self):
-        home_points = self.home_games.aggregate(points=Sum(
-            models.Case(
-                models.When(home_score__gt=models.F('away_score'), then=3),
-                models.When(home_score=models.F('away_score'), then=1),
-                default=0,
-                output_field=models.IntegerField(),
-            )
-        ))['points'] or 0
-        away_points = self.away_games.aggregate(points=Sum(
-            models.Case(
-                models.When(away_score__gt=models.F('home_score'), then=3),
-                models.When(away_score=models.F('home_score'), then=1),
-                default=0,
-                output_field=models.IntegerField(),
-            )
-        ))['points'] or 0
-        return home_points + away_points
+    def goals_scored(self):
+        home_goals = Game.objects.filter(home_team=self, poule=self.poule).aggregate(Sum('home_score'))['home_score__sum'] or 0
+        away_goals = Game.objects.filter(away_team=self, poule=self.poule).aggregate(Sum('away_score'))['away_score__sum'] or 0
+        return home_goals + away_goals
+    def goals_conceded(self):
+        home_goals = Game.objects.filter(home_team=self, poule=self.poule).aggregate(Sum('away_score'))['away_score__sum'] or 0
+        away_goals = Game.objects.filter(away_team=self, poule=self.poule).aggregate(Sum('home_score'))['home_score__sum'] or 0
+        return home_goals + away_goals
+    def points(self):
+        won = Game.objects.filter(home_team=self, poule=self.poule, home_score__gt=F('away_score')) | \
+              Game.objects.filter(away_team=self, poule=self.poule, away_score__gt=F('home_score'))
+        drawn = Game.objects.filter(home_team=self, poule=self.poule, home_score=F('away_score')) | \
+                Game.objects.filter(away_team=self, poule=self.poule, away_score=F('home_score'))
+        return (3* won.count() + drawn.count()) 
     
 class Game(models.Model):
     date = models.DateTimeField()
@@ -55,14 +53,11 @@ class Game(models.Model):
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_games')
     away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_games')
     poule = models.ForeignKey(Poule, on_delete=models.CASCADE)
-    score = models.CharField(max_length=200)
+    home_score = models.IntegerField()
+    away_score = models.IntegerField()
     nPoule = models.IntegerField()
     def __date__(self):
         return self.date
-    def score1_as_list(self):
-        return self.score.split(',')[0]
-    def score2_as_list(self):
-        return self.score.split(',')[1]
     
 class Comment(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)

@@ -32,7 +32,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 class GameAdmin(admin.ModelAdmin):
     inlines=[CommentInline]
-    list_display = ('date', 'location', 'home_team', 'away_team','poule','score')
+    list_display = ('date', 'location', 'home_team', 'away_team','poule','home_score','away_score')
     search_fields = ('location', 'home_team','away_team','poule')
 
 

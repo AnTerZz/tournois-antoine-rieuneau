@@ -24,5 +24,6 @@ urlpatterns = [
     path('', views.IndexView.as_view()),
     path('accounts/', include('django.contrib.auth.urls'))
 ]
+
+#Tells django what to load when a 404 page not found error is cast
 handler404 = 'FinalWhistle.views.custom_404'
-handler500 = 'FinalWhistle.views.custom_500'

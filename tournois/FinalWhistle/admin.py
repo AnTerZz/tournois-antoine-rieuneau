@@ -2,19 +2,16 @@ from django.contrib import admin
 from .models import Tournament, Poule, Team, Game, Comment
 
 
-
+#Group of inline classes to be added to the Admin classes below
 class GameInline(admin.TabularInline):
     model = Game
     extra = 1
-    
 class TeamInline(admin.TabularInline):
     model = Team
     extra = 1
-    
 class CommentInline(admin.TabularInline):
     model = Comment
     extra = 1
-
 class PouleInline(admin.TabularInline):
     model = Poule
     extra = 1
@@ -25,7 +22,6 @@ class PouleAdmin(admin.ModelAdmin):
         (None,               {'fields': ['number']}),
     ]
     inlines = [GameInline,TeamInline]
-    #list_display = ('poule','number')
     list_filter = ['number']
     search_fields = ['number']
 

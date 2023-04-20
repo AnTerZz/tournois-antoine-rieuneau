@@ -1,12 +1,15 @@
+import datetime
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.db.models import Sum
 
 class Tournament(models.Model):
     name = models.CharField(max_length=200)
     location = models.CharField(max_length=200)
     nPoules = models.IntegerField()
     nTeamsInPoule = models.IntegerField()
+    date_start = models.DateField(default=datetime.date.today)
+    date_end = models.DateField(default=datetime.date.today)
     def __str__(self):
         return self.name
     
@@ -27,18 +30,24 @@ class Team(models.Model):
         return self.players.split(',')
     def __str__(self):
         return self.name
-    def add_player(self, player_name):
-        players = self.get_players()
-        players.append(player_name)
-        self.players = ','.join(players)
-        self.save()
-    def remove_player(self, player_name):
-        players = self.get_players()
-        if player_name in players:
-            players.remove(player_name)
-            self.players = ','.join(players)
-            self.save()
-    
+    def total_points(self):
+        home_points = self.home_games.aggregate(points=Sum(
+            models.Case(
+                models.When(home_score__gt=models.F('away_score'), then=3),
+                models.When(home_score=models.F('away_score'), then=1),
+                default=0,
+                output_field=models.IntegerField(),
+            )
+        ))['points'] or 0
+        away_points = self.away_games.aggregate(points=Sum(
+            models.Case(
+                models.When(away_score__gt=models.F('home_score'), then=3),
+                models.When(away_score=models.F('home_score'), then=1),
+                default=0,
+                output_field=models.IntegerField(),
+            )
+        ))['points'] or 0
+        return home_points + away_points
     
 class Game(models.Model):
     date = models.DateTimeField()

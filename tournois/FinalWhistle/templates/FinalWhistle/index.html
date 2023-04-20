@@ -61,7 +61,7 @@
 
 
                         <p class="text-center">Lieu : {{tournament.location}}</p>
-                        <p class="text-center" style="margin-top: -21px;">Date : 24/02/2024 au 25/02/2024</p>
+                        <p class="text-center" style="margin-top: -21px;">Date : {{tournament.date_start}} au {{tournament.date_end}}</p>
                     </div>
                 {% endfor %}
 
@@ -72,7 +72,7 @@
                             <div class="col-md-12 col-lg-12 offset-lg-0" style="border-radius: 20px;padding: 0;margin-bottom: 3px;border: 2px solid var(--bs-yellow);background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
                                 <h1 class="text-center" style="font-family: Raleway, sans-serif;color: var(--bs-indigo);margin-bottom: -2px;margin-top: 10px;">{{tournament.name}}</h1>
                                 <p class="text-center">Lieu : {{tournament.location}}</p>
-                                <p class="text-center" style="margin-top: -21px;">Date : 24/02/2024 au 25/02/2024</p>
+                                <p class="text-center" style="margin-top: -21px;">Date : {{tournament.date_start}} au {{tournament.date_end}}</p>
                             </div>
                         {% endfor %}
                     </div>

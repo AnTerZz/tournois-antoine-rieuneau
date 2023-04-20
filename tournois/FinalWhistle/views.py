@@ -22,6 +22,9 @@ class PouleView(generic.DetailView):
     #context_object_name="poule_list"
     def get_queryset(self):
         return Tournament.objects.order_by('name')
+    def teams_view(request):
+    teams = Team.objects.annotate(total_points=models.ExpressionWrapper(models.F('home_points') + models.F('away_points'), output_field=models.IntegerField())).order_by('-total_points')
+    return render(request, 'teams.html', {'teams': teams})
     
 class MatchView(generic.DetailView):
     template_name = 'FinalWhistle/match.html'
@@ -60,4 +63,3 @@ class EditCommentView(LoginRequiredMixin, generic.UpdateView):
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(user=self.request.user)
-    

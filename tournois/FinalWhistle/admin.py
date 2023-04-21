@@ -18,9 +18,6 @@ class PouleInline(admin.TabularInline):
 
 
 class PouleAdmin(admin.ModelAdmin):
-    fieldsets = [
-        (None,               {'fields': ['number']}),
-    ]
     inlines = [GameInline,TeamInline]
     list_filter = ['number']
     search_fields = ['number']

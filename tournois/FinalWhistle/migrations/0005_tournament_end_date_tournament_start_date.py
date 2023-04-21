@@ -11,14 +11,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='tournament',
-            name='end_date',
-            field=models.DateField(default=datetime.date.today),
-        ),
-        migrations.AddField(
-            model_name='tournament',
-            name='start_date',
-            field=models.DateField(default=datetime.date.today),
-        ),
     ]

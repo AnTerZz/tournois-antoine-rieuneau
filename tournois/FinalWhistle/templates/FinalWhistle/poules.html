@@ -15,6 +15,7 @@
                     <li class="nav-item"><a class="nav-link active" href="">Poules</a></li>
 
                 </ul>
+                <!--Displays a deconnection button if user is authenticated and a connection button if not-->
                 {% if user.is_authenticated %}
                     <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
                     <a class="btn btn-outline-primary shadow" role="button" href="{% url 'logout' %}?next={% url 'FinalWhistle:index' %}">Déconnexion</a>
@@ -37,6 +38,7 @@
                 </div>
             </div>
 
+            <!--Loops through the poules in a tournament and displays them all-->
             {% for poule in tournament.poule_set.all %}
                 <div class="row" style="text-align: center;margin-top: 45px;background: rgb(36,40,91);">
                     <div class="col-md-6 text-center">
@@ -47,6 +49,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!--Hides the information on each poule in a collapse for better ergonomics-->
                 <div class="row collapse" id="collapse-{{ poule.id }}" style="text-align: center;margin-top: 0px;background: #eefdff;">
                     <div class="col-md-6 text-center" style="margin: auto">
                         <div class="table-responsive">

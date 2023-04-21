@@ -15,6 +15,7 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:poule' game.poule.tournament.id%}">Poules</a></li>
                     <li class="nav-item"><a class="nav-link active" href="">Equipes</a></li>
                 </ul>
+                <!--Displays a deconnection button if user is authenticated and a connection button if not-->
                 {% if user.is_authenticated %}
                     <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
                     <a class="btn btn-outline-primary shadow" role="button" href="{% url 'logout' %}?next={% url 'FinalWhistle:index' %}">Déconnexion</a>
@@ -67,7 +68,7 @@
     </section>
 
 
-
+    <!--Shows a textarea to submit a new comment if user is authenticated. Prompts the user to login if he is not authenticated-->
     <section style="margin-top: -87px;margin-bottom: 48px;">
         <div class="container" style="text-align: center;">
             {% if user.is_authenticated %}
@@ -93,12 +94,13 @@
 
 
 
-            
+            <!--Loops through comments on a match to display them-->
             {% for comment in comments %}
                 <div class="col" style="width: 800px;margin: auto;">
                     <h1 style="text-align: left;color: var(--bs-indigo);font-weight: bold;font-size: 24.89px;">{{comment.user}}<span style="margin-left: 12px;color: var(--bs-gray);font-size: 16.89px;text-align: center;">{{comment.date}}
                         <!--<span style="margin-left: 11px;font-size: 12.89px;color: var(--bs-red);">edit</span>-->
                     
+                    <!--If the user has posted a comment, allows him to edit it-->
                     {% if user == comment.user %}
                         <a href="{% url 'FinalWhistle:edit_comment' comment.id %}" style="margin-left: 11px;font-size: 12.89px;color: var(--bs-red);">edit</a>
                     {% endif %}

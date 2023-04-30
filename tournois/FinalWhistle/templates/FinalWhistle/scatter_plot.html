@@ -1,19 +1,13 @@
 {%load static%}
-
-<h1>{{ tournament.name }}</h1>
-  <h2>Teams:</h2>
-  <ul>
-    {% for team in tournament.team_set.all %}
-      <li>{{ team.name }}</li>
-    {% endfor %}
-  </ul>
   
   <!-- Add a canvas element for the scatter plot -->
   <canvas id="scatter-plot"></canvas>
   
   <!-- Include Chart.js library -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
-  
+  <!--<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>-->
+
+
   <script>
     // Get data for the scatter plot
     const data = {
@@ -22,13 +16,14 @@
         data: [
           {% for team in tournament.team_set.all %}
             {
-              x: {{ team.goals_scored }},
-              y: {{ team.goals_conceded }},
+              y: {{ team.goals_scored }},
+              x: {{ team.goals_conceded }},
               label: '{{ team.name }}'
             },
           {% endfor %}
         ],
-        backgroundColor: '#007bff'
+        backgroundColor: '#24285B',
+        pointBackgroundColor: '#24285B',
       }]
     };
     
@@ -37,41 +32,57 @@
       responsive: true,
       title: {
         display: true,
-        text: 'Goals Scored vs. Goals Conceded'
+        text: 'Goals Scored vs. Goals Conceded',
       },
       scales: {
-        xAxes: [{
+        yAxes: [{
           scaleLabel: {
             display: true,
             labelString: 'Goals Scored'
           },
           ticks: {
-            beginAtZero: true
+            beginAtZero: true,
+            stepSize: 1,
           }
         }],
-        yAxes: [{
+        xAxes: [{
           scaleLabel: {
             display: true,
             labelString: 'Goals Conceded'
           },
           ticks: {
-            beginAtZero: true
+            beginAtZero: true,
+            stepSize: 1,
           }
         }]
       },
       tooltips: {
         callbacks: {
-          label: function(tooltipItem, data) {
-            var label = data.datasets[tooltipItem.datasetIndex].label || '';
-            if (label) {
-              label += ': ';
-            }
-            label += '(' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
-            return label;
-          }
+            label: function(tooltipItem, data) {
+                var teamLabel = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].label;
+                var xLabel = tooltipItem.xLabel;
+                var yLabel = tooltipItem.yLabel;
+                return teamLabel + ': (' + yLabel + ', ' + xLabel + ')';
+              }
         }
+      },
+      elements: {
+        point: {
+            radius: 8,
+            hoverRadius: 20,
+            hoverBackgroundColor: '#FFD200',
+            hoverBorderColor: '#24285B',
+            hoverBorderWidth: 4,
+        }
+    },
+    hover: {
+        mode: 'nearest'
+      },
+      animation: {
+        duration: 2500,
+        easing: 'easeInOutQuart',
       }
-    };
+};
     
     // Create the scatter plot
     const scatterPlot = new Chart(document.getElementById('scatter-plot'), {

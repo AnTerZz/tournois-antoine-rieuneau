@@ -67,3 +67,41 @@ class EditCommentView(LoginRequiredMixin, generic.UpdateView):
 #Custom 404 view, loads the right template
 def custom_404(request, exception):
     return render(request, 'FinalWhistle/404.html', status=404)
+
+
+
+
+from django.views.generic import TemplateView
+from chartjs.views.lines import BaseLineChartView
+
+
+class LineChartJSONView(BaseLineChartView):
+    def get_labels(self):
+        """Return 7 labels for the x-axis."""
+        return ["January", "February", "March", "April", "May", "June", "July"]
+
+    def get_providers(self):
+        """Return names of datasets."""
+        return ["Central", "Eastside", "Westside"]
+
+    def get_data(self):
+        """Return 3 datasets to plot."""
+
+        return [[75, 44, 92, 11, 44, 95, 35],
+                [41, 92, 18, 3, 73, 87, 92],
+                [87, 21, 94, 3, 90, 13, 65]]
+
+
+line_chart = TemplateView.as_view(template_name='FinalWhistle/line_chart.html')
+
+
+from django.shortcuts import render
+from .models import Tournament, Game, Team
+
+
+def scatter_plot(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    teams = tournament.team_set.all()
+    data = [(team.goals_scored(), team.goals_conceded()) for team in teams]
+    context = {'data': data, 'tournament': tournament} # Add tournament to the context
+    return render(request, 'FinalWhistle/scatter_plot.html', context)

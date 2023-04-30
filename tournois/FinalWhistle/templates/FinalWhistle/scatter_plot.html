@@ -1,0 +1,82 @@
+{%load static%}
+
+<h1>{{ tournament.name }}</h1>
+  <h2>Teams:</h2>
+  <ul>
+    {% for team in tournament.team_set.all %}
+      <li>{{ team.name }}</li>
+    {% endfor %}
+  </ul>
+  
+  <!-- Add a canvas element for the scatter plot -->
+  <canvas id="scatter-plot"></canvas>
+  
+  <!-- Include Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+  
+  <script>
+    // Get data for the scatter plot
+    const data = {
+      datasets: [{
+        label: 'Goals Scored vs. Goals Conceded',
+        data: [
+          {% for team in tournament.team_set.all %}
+            {
+              x: {{ team.goals_scored }},
+              y: {{ team.goals_conceded }},
+              label: '{{ team.name }}'
+            },
+          {% endfor %}
+        ],
+        backgroundColor: '#007bff'
+      }]
+    };
+    
+    // Set options for the scatter plot
+    const options = {
+      responsive: true,
+      title: {
+        display: true,
+        text: 'Goals Scored vs. Goals Conceded'
+      },
+      scales: {
+        xAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: 'Goals Scored'
+          },
+          ticks: {
+            beginAtZero: true
+          }
+        }],
+        yAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: 'Goals Conceded'
+          },
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      },
+      tooltips: {
+        callbacks: {
+          label: function(tooltipItem, data) {
+            var label = data.datasets[tooltipItem.datasetIndex].label || '';
+            if (label) {
+              label += ': ';
+            }
+            label += '(' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
+            return label;
+          }
+        }
+      }
+    };
+    
+    // Create the scatter plot
+    const scatterPlot = new Chart(document.getElementById('scatter-plot'), {
+      type: 'scatter',
+      data: data,
+      options: options
+    });
+  </script>

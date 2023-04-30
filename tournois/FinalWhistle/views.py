@@ -81,3 +81,29 @@ def scatter_plot(request, tournament_id):
     data = [(team.goals_scored(), team.goals_conceded()) for team in teams]
     context = {'data': data, 'tournament': tournament} # Add tournament to the context
     return render(request, 'FinalWhistle/scatter_plot.html', context)
+
+def goal_2plot(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    teams = tournament.team_set.all()
+    data = [(team.goals_scored(), team.goals_conceded()) for team in teams]
+    context = {'data': data, 'tournament': tournament} # Add tournament to the context
+    return render(request, 'FinalWhistle/goal_plot.html', context)
+
+def goal_plot(request, tournament_id):
+    # Get all teams in the tournament
+    teams = Team.objects.filter(tournament_id=tournament_id)
+
+    # Calculate goals scored and conceded for each team
+    team_names = [team.name for team in teams]
+    goals_scored = [team.goals_scored() for team in teams]
+    goals_conceded = [team.goals_conceded() for team in teams]
+
+    # Pass data to the template context
+    context = {
+        'team_names': team_names,
+        'goals_scored': goals_scored,
+        'goals_conceded': goals_conceded,
+    }
+
+    # Render the template with the data
+    return render(request, 'FinalWhistle/goal_plot.html', context)

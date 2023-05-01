@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
-from .models import Tournament, Game, Comment
+from .models import Tournament, Game, Comment, Stadium
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core import serializers
 
 
 
@@ -67,3 +68,7 @@ class EditCommentView(LoginRequiredMixin, generic.UpdateView):
 #Custom 404 view, loads the right template
 def custom_404(request, exception):
     return render(request, 'FinalWhistle/404.html', status=404)
+
+def map_view(request):
+    stadiums = list(Stadium.objects.values('name','latitude','longitude')) 
+    return render(request, 'FinalWhistle/test_map.html', context={'stadiums':stadiums}) 

@@ -60,7 +60,13 @@ class Team(models.Model):
                 Game.objects.filter(away_team=self, poule=self.poule, away_score=F('home_score'))
         return (3* won.count() + drawn.count()) 
 
-
+class Stadium(models.Model):
+    name = models.CharField(max_length=200)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    def __str__(self) -> str:
+        return self.name
+    
 #Team model, self explanatory
 class Game(models.Model):
     date = models.DateTimeField()
@@ -70,6 +76,7 @@ class Game(models.Model):
     poule = models.ForeignKey(Poule, on_delete=models.CASCADE)
     home_score = models.IntegerField()
     away_score = models.IntegerField()
+    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE, null=True)
     def __date__(self):
         return self.date
     
@@ -85,6 +92,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return 'Comment {} by {}'.format(self.body, self.user)
+    
+
     
     
     

@@ -18,9 +18,12 @@ class Tournament(models.Model):
         return self.name
     
     def get_stadiums(self):
-        stadiums = list(Stadium.objects.filter(game__poule__tournament = self).values('name','latitude','longitude'))
+        stadiums = list(Stadium.objects.filter(game__poule__tournament = self).values('id','name','latitude','longitude'))
         return stadiums
-        
+    
+    def get_games(self):
+        games = list(Game.objects.filter(poule__tournament = self).values('stadium','home_team__name','away_team__name'))
+        return games    
  
     
 #Poule model, identified by a number appended to 'Poule '
@@ -88,6 +91,8 @@ class Game(models.Model):
     
     def get_stadium(self):
         return list(Stadium.objects.filter(pk=self.stadium.pk).values('name','latitude','longitude'))
+    
+    
 
     
     

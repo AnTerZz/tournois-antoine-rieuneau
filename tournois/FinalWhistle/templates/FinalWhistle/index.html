@@ -3,26 +3,13 @@
 
 
 {%load static%}
+
+
+{% block nav_items %}
+    <li class="nav-item" style="margin-left: 100px"><a class="nav-link active" href="{% url 'FinalWhistle:index' %}">Tournoi</a></li>
+{% endblock %}        
+    
 {% block content %}
-
-<body>
-    <nav class="navbar navbar-light navbar-expand-md fixed-top navbar-shrink py-3" id="mainNav">
-        <div class="container"><img class="img-fluid" data-bss-hover-animate="bounce" src="{% static 'FinalWhistle/assets/img/logocolours.png'%}" width="146" height="77" style="margin-bottom: 14px;width: 150px;"><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse" id="navcol-1">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item" style="margin-left: 100px"><a class="nav-link active" href="{% url 'FinalWhistle:index' %}">Tournoi</a></li>
-                </ul>
-
-                <!--Displays a deconnection button if user is authenticated and a connection button if not-->
-                {% if user.is_authenticated %}
-                    <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
-                    <a class="btn btn-outline-primary shadow" role="button" href="{% url 'logout' %}?next={% url 'FinalWhistle:index' %}">Déconnexion</a>
-                {% else %}
-                    <a class="btn btn-primary shadow" role="button" href="{% url 'login' %}?next={% url 'FinalWhistle:index' %}">Connexion</a>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
     <header class="pt-5">
         <div class="container pt-4 pt-xl-5">
             <div class="row flex-grow-1 pt-5">

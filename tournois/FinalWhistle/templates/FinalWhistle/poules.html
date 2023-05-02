@@ -41,7 +41,7 @@
 
             <div id="map" class="row" style="text-align: center; height:300px">
 
-            {{stadiums|json_script:"stadiums"}}
+            {{tournament.get_stadiums|json_script:"stadiums"}}
                 
             <script src="{% static 'FinalWhistle/assets/js/map.js'%}"></script>
             </div>

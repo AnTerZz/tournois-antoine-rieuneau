@@ -18,16 +18,13 @@ class IndexView(generic.ListView):
         return Tournament.objects.order_by('name')
     
 
-'''
+
 #DetailView which loads the poule template to show all the poules in a tournament and the poule information (games/scores)
 class PouleView(generic.DetailView):
     template_name = 'FinalWhistle/poules.html'
-    def get_stadiums(self):
-        stadiums = list(Stadium.objects.values('name','latitude','longitude')) 
     
     def get_queryset(self):
         return Tournament.objects.order_by('name')
-'''   
     
     
 #DetailView which loads the match template and displays information on the game, also handles the comment post function
@@ -75,13 +72,3 @@ def custom_404(request, exception):
 def map_view(request):
     stadiums = list(Stadium.objects.values('name','latitude','longitude')) 
     return render(request, 'FinalWhistle/test_map.html', context={'stadiums':stadiums}) 
-
-def tournamentDetail(request, tournament_id):
-    """
-    Get the specified tournament
-    :param request: The incoming request
-    :param tournament_id: The tournament's ID
-    """
-    tournament = get_object_or_404(Tournament, pk=tournament_id)
-    stadiums = list(Stadium.objects.filter(game__poule__tournament__pk = tournament_id).values('name','latitude','longitude'))
-    return render(request, 'FinalWhistle/poules.html', {'tournament': tournament, 'stadiums':stadiums})

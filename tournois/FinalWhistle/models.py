@@ -13,8 +13,14 @@ class Tournament(models.Model):
     nTeamsInPoule = models.IntegerField()
     date_start = models.DateField(default=datetime.date.today)
     date_end = models.DateField(default=datetime.date.today)
+    
     def __str__(self):
         return self.name
+    
+    def get_stadiums(self):
+        stadiums = list(Stadium.objects.filter(game__poule__tournament = self).values('name','latitude','longitude'))
+        return stadiums
+        
  
     
 #Poule model, identified by a number appended to 'Poule '
@@ -79,6 +85,10 @@ class Game(models.Model):
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE, null=True)
     def __date__(self):
         return self.date
+    
+    def get_stadium(self):
+        return list(Stadium.objects.filter(pk=self.stadium.pk).values('name','latitude','longitude'))
+
     
     
 #Comment model, self-explanatory

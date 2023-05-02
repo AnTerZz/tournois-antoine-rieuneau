@@ -6,7 +6,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 
-
 #Base index view which displays all the tournaments in the database
 class IndexView(generic.ListView):
     template_name = 'FinalWhistle/index.html'
@@ -23,8 +22,6 @@ class PouleView(generic.DetailView):
     template_name = 'FinalWhistle/poules.html'
     def get_queryset(self):
         return Tournament.objects.order_by('name')
-    
-    
     
 #DetailView which loads the match template and displays information on the game, also handles the comment post function
 class MatchView(generic.DetailView):
@@ -82,28 +79,9 @@ def scatter_plot(request, tournament_id):
     context = {'data': data, 'tournament': tournament} # Add tournament to the context
     return render(request, 'FinalWhistle/scatter_plot.html', context)
 
-def goal_2plot(request, tournament_id):
+def goal_plot(request, tournament_id):
     tournament = Tournament.objects.get(id=tournament_id)
     teams = tournament.team_set.all()
     data = [(team.goals_scored(), team.goals_conceded()) for team in teams]
-    context = {'data': data, 'tournament': tournament} # Add tournament to the context
-    return render(request, 'FinalWhistle/goal_plot.html', context)
-
-def goal_plot(request, tournament_id):
-    # Get all teams in the tournament
-    teams = Team.objects.filter(tournament_id=tournament_id)
-
-    # Calculate goals scored and conceded for each team
-    team_names = [team.name for team in teams]
-    goals_scored = [team.goals_scored() for team in teams]
-    goals_conceded = [team.goals_conceded() for team in teams]
-
-    # Pass data to the template context
-    context = {
-        'team_names': team_names,
-        'goals_scored': goals_scored,
-        'goals_conceded': goals_conceded,
-    }
-
-    # Render the template with the data
+    context = {'data': data, 'tournament': tournament} # Add team names to the context
     return render(request, 'FinalWhistle/goal_plot.html', context)

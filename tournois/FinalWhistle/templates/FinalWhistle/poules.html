@@ -37,6 +37,15 @@
                     <p style="text-align: center;">Nombre d'équipes par poules: {{tournament.nTeamsInPoule}}</p>
                 </div>
             </div>
+            
+
+            <div id="map" class="row" style="text-align: center; height:300px">
+
+            {{stadiums|json_script:"stadiums"}}
+                
+            <script src="{% static 'FinalWhistle/assets/js/map.js'%}"></script>
+            </div>
+
 
             <!--Loops through the poules in a tournament and displays them all-->
             {% for poule in tournament.poule_set.all %}

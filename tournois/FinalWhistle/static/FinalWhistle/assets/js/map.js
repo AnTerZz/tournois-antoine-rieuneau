@@ -31,11 +31,21 @@ function format_string(stadium) {
     return str
 }
 
+var marker_list = []
 for(const stadium of stadium_list){
     var marker = L.marker([stadium.latitude, stadium.longitude]).addTo(map);
-    marker.bindPopup(format_string(stadium)).openPopup();
+    marker.bindPopup(format_string(stadium));
+    marker_list.push(marker)
     console.log([stadium.latitude, stadium.longitude])
 }
+
+if(marker_list.length>1){
+    var group = new L.featureGroup(marker_list);
+    map.fitBounds(group.getBounds().pad(0.05));
+} else {
+    marker.openPopup();
+}
+
 
 
 

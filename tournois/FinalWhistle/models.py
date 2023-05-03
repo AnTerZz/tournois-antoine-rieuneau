@@ -105,7 +105,6 @@ class Stadium(models.Model):
 #Team model, self explanatory
 class Game(models.Model):
     date = models.DateTimeField(null = True, blank = True)
-    location = models.CharField(max_length=200, null = True, blank = True)
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_games')
     away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_games')
     poule = models.ForeignKey(Poule, on_delete=models.CASCADE, null = True, blank = True)

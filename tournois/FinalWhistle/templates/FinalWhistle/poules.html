@@ -82,7 +82,7 @@
                         <div>
                             {% for game in poule.game_set.all %}
                                 <div class="col"><a class="link-primary" href="{% url 'FinalWhistle:match' game.id %}" style="font-weight: bold;font-size: 24px;color: var(--bs-blue);"><span style="font-size: 32px;color: rgb(0,0,0);">{{game.home_score}}&nbsp;</span>{{game.home_team}} - {{game.away_team}}</a><span style="font-weight: bold;font-size: 32px;color: rgb(0,0,0);">&nbsp;{{game.away_score}}</span>
-                                    <p><span style="font-weight: bold;">Lieu :&nbsp;</span>{{game.location}}</p>
+                                    <p><span style="font-weight: bold;">Lieu :&nbsp;</span>{{game.stadium}}</p>
                                     <p style="margin-top: -23px;"><span style="font-weight: bold;">Date :&nbsp;</span>{{game.date}}</p>
                                 </div>
                             {%endfor%}

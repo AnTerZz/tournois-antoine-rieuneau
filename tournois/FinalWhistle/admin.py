@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Tournament, Poule, Team, Game, Comment, Round
+
+from .models import Tournament, Poule, Team, Game, Comment, Stadium, Round
+
 
 
 #Group of inline classes to be added to the Admin classes below
@@ -44,3 +46,5 @@ admin.site.register(Team)
 admin.site.register(Game, GameAdmin)
 admin.site.register(Poule, PouleAdmin)
 admin.site.register(Round, RoundAdmin)
+admin.site.register(Stadium)
+

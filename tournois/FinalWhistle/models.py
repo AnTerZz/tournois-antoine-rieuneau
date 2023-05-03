@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.forms import IntegerField
 from django.db.models import F
+import json
 
 #Tournament model, keeps important information on the tournament, self-explanatory
 class Tournament(models.Model):
@@ -13,8 +14,17 @@ class Tournament(models.Model):
     nTeamsInPoule = models.IntegerField()
     date_start = models.DateField(default=datetime.date.today)
     date_end = models.DateField(default=datetime.date.today)
+    
     def __str__(self):
         return self.name
+    
+    def get_stadiums(self):
+        stadiums = list(Stadium.objects.filter(game__poule__tournament = self).values('id','name','latitude','longitude'))
+        return stadiums
+    
+    def get_games(self):
+        games = list(Game.objects.filter(poule__tournament = self).values('stadium','home_team__name','away_team__name','poule__number'))
+        return games    
  
     
 #Poule model, identified by a number appended to 'Poule '
@@ -85,7 +95,13 @@ class Team(models.Model):
     
 
 
-
+class Stadium(models.Model):
+    name = models.CharField(max_length=200)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    def __str__(self) -> str:
+        return self.name
+    
 #Team model, self explanatory
 class Game(models.Model):
     date = models.DateTimeField(null = True, blank = True)
@@ -96,8 +112,15 @@ class Game(models.Model):
     round = models.ForeignKey(Round, on_delete=models.CASCADE, null=True, blank = True)
     home_score = models.IntegerField(null = True, blank = True)
     away_score = models.IntegerField(null = True, blank = True)
+    stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE, null=True)
+
+
     def __date__(self):
         return self.date
+    
+    def get_stadium(self):
+        return list(Stadium.objects.filter(pk=self.stadium.pk).values('name','latitude','longitude'))
+
     
     
 #Comment model, self-explanatory
@@ -111,6 +134,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return 'Comment {} by {}'.format(self.body, self.user)
+    
+
     
     
     

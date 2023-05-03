@@ -1,0 +1,65 @@
+{% load static %}
+
+  <!-- Add a canvas element for the bar chart -->
+  <canvas id="goal-chart"></canvas>
+  
+  <!-- Include Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+  
+  <script>
+      // Get data for the bar chart
+    const labels = [
+      {% for team in tournament.team_set.all %}
+        "{{ team.name }}",
+      {% endfor %}
+    ];
+    const goalsScored = [
+      {% for team in tournament.team_set.all %}
+        "{{ team.goals_scored }}",
+      {% endfor %}
+    ];
+    const goalsConceded = [
+      {% for team in tournament.team_set.all %}
+        "{{ team.goals_conceded }}",
+      {% endfor %}
+    ];
+    const goalData = {
+      labels: labels,
+      datasets: [{
+        label: 'Goals Scored',
+        data: goalsScored,
+        backgroundColor: 'rgba(36, 40, 91, 0.5)',
+        borderColor: '#24285B',
+        borderWidth: 1
+      }, {
+        label: 'Goals Conceded',
+        data: goalsConceded,
+        backgroundColor: 'rgba(255, 210, 0, 0.5)',
+        borderColor: 'rgba(255, 210, 0, 1)',
+        borderWidth: 1
+      }]
+    };
+  
+    // Set options for the bar chart
+    const config = {
+      type: 'horizontalBar',
+      data: goalData,
+      options: {
+        responsive: true,
+        scales: {
+          xAxes: [{
+            ticks: {
+              beginAtZero: true,
+              stepSize: 1,
+            }
+          }]
+        }
+      }
+    };
+  
+    // Create a new bar chart
+    const goalChart = new Chart(
+      document.getElementById('goal-chart'),
+      config
+    );
+  </script>

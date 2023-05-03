@@ -1,11 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from .models import Tournament, Game, Comment, Stadium
+from .models import Tournament, Game, Comment, Stadium, Team
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
 from django.db.models import Q
-
 
 
 
@@ -27,7 +26,7 @@ class PouleView(generic.DetailView):
         
         return Tournament.objects.order_by('name')
     
-    
+
 #DetailView which loads the match template and displays information on the game, also handles the comment post function
 class MatchView(generic.DetailView):
     template_name = 'FinalWhistle/match.html'
@@ -70,6 +69,70 @@ class EditCommentView(LoginRequiredMixin, generic.UpdateView):
 def custom_404(request, exception):
     return render(request, 'FinalWhistle/404.html', status=404)
 
+
+
+
+def scatter_plot(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    teams = tournament.team_set.all()
+    data = [(team.goals_scored(), team.goals_conceded()) for team in teams]
+    context = {'data': data, 'tournament': tournament} # Add tournament to the context
+    return render(request, 'FinalWhistle/scatter_plot.html', context)
+
+def goal_plot(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    teams = tournament.team_set.all()
+    data = [(team.goals_scored(), team.goals_conceded()) for team in teams]
+    context = {'data': data, 'tournament': tournament} # Add team names to the context
+    return render(request, 'FinalWhistle/goal_plot.html', context)
+
+
+import json
+
+
+def team_goals(request, pk):
+    game = Game.objects.get(id=pk)
+    team_home = game.home_team
+    team_away = game.away_team
+    games_home = Game.objects.filter(Q(home_team=team_home) | Q(away_team=team_home)).order_by('date')
+    games_away = Game.objects.filter(Q(home_team=team_away) | Q(away_team=team_away)).order_by('date')
+    scores_home = []
+    opponent_names_home = []
+    game_dates_home = []
+    for game in games_home:
+        if game.home_team == team_home:
+            scores_home.append(game.home_score)
+            opponent_names_home.append(game.away_team.name)
+            game_dates_home.append(game.date.strftime("%b %d, %Y"))
+        else:
+            scores_home.append(game.away_score)
+            opponent_names_home.append(game.home_team.name)
+            game_dates_home.append(game.date.strftime("%b %d, %Y"))
+    score_data_home = json.dumps(scores_home)
+    opponent_names_away = []
+    game_dates_away = []
+    scores_away = []
+    for game in games_away:
+        if game.home_team == team_away:
+            scores_away.append(game.home_score)
+            opponent_names_away.append(game.away_team.name)
+            game_dates_away.append(game.date.strftime("%b %d, %Y"))
+        else:
+            scores_away.append(game.away_score)
+            opponent_names_away.append(game.home_team.name)
+            game_dates_away.append(game.date.strftime("%b %d, %Y"))
+    score_data_away = json.dumps(scores_away)
+    context = {
+        'score_data_home': score_data_home,
+        'score_data_away': score_data_away,
+        'opponent_names_home': opponent_names_home,
+        'opponent_names_away': opponent_names_away,
+        'game_dates_home': game_dates_home,
+        'game_dates_away': game_dates_away,
+        'home_team': team_home,
+        'away_team': team_away,
+    }
+    return render(request, 'FinalWhistle/team_goals.html', context)
 
 #Search
 def search(request):

@@ -8,12 +8,14 @@
   <!--<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>-->
 
 <script>
-  const scoreData_home = {{ score_data_home }};
-  const scoreData_away = {{ score_data_away }};
-  const opponentNames_home = {{ opponent_names_home|safe }};
-  const opponentNames_away = {{ opponent_names_away|safe }};
-  const gameDates_home = {{ game_dates_home|safe }};
-  const gameDates_away = {{ game_dates_away|safe }};
+  const scoreData_home = {{ goals_context.score_data_home }};
+  const scoreData_away = {{ goals_context.score_data_away }};
+  const opponentNames_home = {{ goals_context.opponent_names_home|safe }};
+  const opponentNames_away = {{ goals_context.opponent_names_away|safe }};
+  const gameDates_home = {{ goals_context.game_dates_home|safe }};
+  const gameDates_away = {{ goals_context.game_dates_away|safe }};
+  const teamName_home = '{{ goals_context.home_team }}';
+  const teamName_away = '{{ goals_context.away_team }}';
   
   const ctx = document.getElementById('team-goals').getContext('2d');
   const chart = new Chart(ctx, {
@@ -21,7 +23,7 @@
     data: {
       labels: Array.from(Array(scoreData_home.length).keys()).map(i => i + 1),
       datasets: [{
-        label: '{{ home_team }}',
+        label: teamName_home,
         data: scoreData_home,
         borderColor: 'rgba(36, 40, 91)',
         backgroundColor: 'rgba(36, 40, 91, 0.2)',
@@ -41,7 +43,7 @@
           return `Date: ${gameDate}, Opponent: ${opponentName}`;
         }
       }, {
-        label: '{{ away_team }}',
+        label: teamName_away,
         data: scoreData_away,
         borderColor: 'rgba(255, 210, 0)',
         backgroundColor: 'rgba(255, 210, 0, 0.2)',
@@ -76,8 +78,9 @@
             const datasetIndex = tooltipItem[0].datasetIndex;
             const index = tooltipItem[0].index;
             const gameDates = (datasetIndex == 0) ? gameDates_home : gameDates_away;
+            const teamName = (datasetIndex == 0) ? teamName_home : teamName_away;
             const opponentNames = (datasetIndex == 0) ? opponentNames_home : opponentNames_away;
-            return `Vs. ${opponentNames[index]} - ${gameDates[index]}`;
+            return `${teamName} Vs. ${opponentNames[index]} - ${gameDates[index]}`;
           },
           label: function(tooltipItem, data) {
             return `Goals: ${tooltipItem.value}`;

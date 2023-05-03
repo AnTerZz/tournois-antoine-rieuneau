@@ -3,9 +3,8 @@ from django.urls import reverse, reverse_lazy
 from .models import Tournament, Game, Comment, Stadium, Team
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core import serializers
 from django.db.models import Q
-
+import json
 
 
 #Base index view which displays all the tournaments in the database
@@ -37,8 +36,11 @@ class MatchView(generic.DetailView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         comments_connected = Comment.objects.filter(game=self.get_object()).order_by('-date')
+        data['goals_context'] = team_goals(self.kwargs["pk"])
         data['comments'] = comments_connected
         return data
+    
+    
     
     #post function when a new comment is added
     def post(self, request, *args, **kwargs):
@@ -47,7 +49,6 @@ class MatchView(generic.DetailView):
                                   game=self.get_object())
         new_comment.save()
         return self.get(self, request, *args, **kwargs)
-
 
 #UpdateView which allows an authenticated user to update his comments' 'body'
 class EditCommentView(LoginRequiredMixin, generic.UpdateView):
@@ -90,7 +91,7 @@ def goal_plot(request, tournament_id):
 import json
 
 
-def team_goals(request, pk):
+def team_goals(pk):
     game = Game.objects.get(id=pk)
     team_home = game.home_team
     team_away = game.away_team
@@ -132,7 +133,7 @@ def team_goals(request, pk):
         'home_team': team_home,
         'away_team': team_away,
     }
-    return render(request, 'FinalWhistle/team_goals.html', context)
+    return context
 
 #Search
 def search(request):

@@ -84,19 +84,17 @@
                     </div>
                 </div>
             {%endfor%}
+        
+            <div class="row" style="text-align: center; margin-top: 70px">
+                <div class="col-md-6 text-center">
+                    {% include 'FinalWhistle/scatter_plot.html' %}
+                </div>
+                <div class="col-md-6 text-center">
+                    {% include 'FinalWhistle/goal_plot.html' %}
+                </div>
+            </div>
         </div>
     </section>
-
-
-
-   <div style="height: 1000px; width: 1000px; justify-content: center; align-items: center; margin-left: auto; margin-right: auto; ">
-        {% include 'FinalWhistle/scatter_plot.html' %}
-    </div>
-
-
-    <div style="height: 1000px; width: 1000px; justify-content: center; align-items: center; margin-left: auto; margin-right: auto">
-        {% include 'FinalWhistle/goal_plot.html' %}
-    </div>
 
 
 {% endblock %}

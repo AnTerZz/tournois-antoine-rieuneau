@@ -93,7 +93,7 @@ def team2_goals(request, pk):
 from django.db.models import Q
 import json
 
-def team_goals(request, pk):
+def team2_goals(request, pk):
     game = Game.objects.get(id=pk)
     team_home = game.home_team
     team_away = game.away_team
@@ -116,5 +116,49 @@ def team_goals(request, pk):
     context = {
         'score_data_home': score_data_home,
         'score_data_away': score_data_away,
+    }
+    return render(request, 'FinalWhistle/team_goals.html', context)
+
+def team_goals(request, pk):
+    game = Game.objects.get(id=pk)
+    team_home = game.home_team
+    team_away = game.away_team
+    games_home = Game.objects.filter(Q(home_team=team_home) | Q(away_team=team_home)).order_by('date')
+    games_away = Game.objects.filter(Q(home_team=team_away) | Q(away_team=team_away)).order_by('date')
+    scores_home = []
+    opponent_names_home = []
+    game_dates_home = []
+    for game in games_home:
+        if game.home_team == team_home:
+            scores_home.append(game.home_score)
+            opponent_names_home.append(game.away_team.name)
+            game_dates_home.append(game.date.strftime("%b %d, %Y"))
+        else:
+            scores_home.append(game.away_score)
+            opponent_names_home.append(game.home_team.name)
+            game_dates_home.append(game.date.strftime("%b %d, %Y"))
+    score_data_home = json.dumps(scores_home)
+    opponent_names_away = []
+    game_dates_away = []
+    scores_away = []
+    for game in games_away:
+        if game.home_team == team_away:
+            scores_away.append(game.home_score)
+            opponent_names_away.append(game.away_team.name)
+            game_dates_away.append(game.date.strftime("%b %d, %Y"))
+        else:
+            scores_away.append(game.away_score)
+            opponent_names_away.append(game.home_team.name)
+            game_dates_away.append(game.date.strftime("%b %d, %Y"))
+    score_data_away = json.dumps(scores_away)
+    context = {
+        'score_data_home': score_data_home,
+        'score_data_away': score_data_away,
+        'opponent_names_home': opponent_names_home,
+        'opponent_names_away': opponent_names_away,
+        'game_dates_home': game_dates_home,
+        'game_dates_away': game_dates_away,
+        'home_team': team_home,
+        'away_team': team_away,
     }
     return render(request, 'FinalWhistle/team_goals.html', context)

@@ -7,37 +7,88 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
   <!--<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>-->
 
-  <script>
-    const scoreData_home = {{ score_data_home }};
-    const scoreData_away = {{ score_data_away }};
-    const ctx = document.getElementById('team-goals').getContext('2d');
-    const chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: Array.from(Array(scoreData_home.length).keys()).map(i => i + 1),
-        datasets: [{
-          label: '{{ team_name_home }}',
-          data: scoreData_home,
-          borderColor: 'rgba(36, 40, 91)',
-          backgroundColor: 'rgba(36, 40, 91, 0.2)',
-          borderWidth: 1
-        }, {
-            label: '{{ team_name_away }}',
-            data: scoreData_away,
-            borderColor: 'rgba(255, 210, 0)',
-            backgroundColor: 'rgba(255, 210, 0, 0.2)',
-            borderWidth: 1
-          }]
-        
+<script>
+  const scoreData_home = {{ score_data_home }};
+  const scoreData_away = {{ score_data_away }};
+  const opponentNames_home = {{ opponent_names_home|safe }};
+  const opponentNames_away = {{ opponent_names_away|safe }};
+  const gameDates_home = {{ game_dates_home|safe }};
+  const gameDates_away = {{ game_dates_away|safe }};
+  
+  const ctx = document.getElementById('team-goals').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Array.from(Array(scoreData_home.length).keys()).map(i => i + 1),
+      datasets: [{
+        label: '{{ home_team }}',
+        data: scoreData_home,
+        borderColor: 'rgba(36, 40, 91)',
+        backgroundColor: 'rgba(36, 40, 91, 0.2)',
+        borderWidth: 1,
+        pointHoverBackgroundColor: 'rgba(36, 40, 91, 0.8)',
+        pointHoverBorderColor: 'rgba(36, 40, 91, 0.8)',
+        pointHoverBorderWidth: 2,
+        pointHoverRadius: 10,
+        pointHoverRadiusRatio: 4,
+        pointHoverLabelFontColor: '#fff',
+        pointHoverLabelFontSize: 14,
+        pointHoverLabelFontStyle: 'bold',
+        pointHoverLabelFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+        pointHoverCallback: function(point, data) {
+          const gameDate = gameDates_home[point.index];
+          const opponentName = opponentNames_home[point.index];
+          return `Date: ${gameDate}, Opponent: ${opponentName}`;
+        }
+      }, {
+        label: '{{ away_team }}',
+        data: scoreData_away,
+        borderColor: 'rgba(255, 210, 0)',
+        backgroundColor: 'rgba(255, 210, 0, 0.2)',
+        borderWidth: 1,
+        pointHoverBackgroundColor: 'rgba(255, 210, 0, 0.8)',
+        pointHoverBorderColor: 'rgba(255, 210, 0, 0.8)',
+        pointHoverBorderWidth: 2,
+        pointHoverRadius: 10,
+        pointHoverRadiusRatio: 4,
+        pointHoverLabelFontColor: '#fff',
+        pointHoverLabelFontSize: 14,
+        pointHoverLabelFontStyle: 'bold',
+        pointHoverLabelFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+        pointHoverCallback: function(point, data) {
+          const gameDate = gameDates_away[point.index];
+          const opponentName = opponentNames_away[point.index];
+          return `Date: ${gameDate}, Opponent: ${opponentName}`;
+        }
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
       },
-      options: {
-        scales: {
-          yAxes: [{
-            ticks: {
-              beginAtZero: true
-            }
-          }]
+      tooltips: {
+        callbacks: {
+          title: function(tooltipItem, data) {
+            const datasetIndex = tooltipItem[0].datasetIndex;
+            const index = tooltipItem[0].index;
+            const gameDates = (datasetIndex == 0) ? gameDates_home : gameDates_away;
+            const opponentNames = (datasetIndex == 0) ? opponentNames_home : opponentNames_away;
+            return `Vs. ${opponentNames[index]} - ${gameDates[index]}`;
+          },
+          label: function(tooltipItem, data) {
+            return `Goals: ${tooltipItem.value}`;
+          }
         }
       }
-    });
-  </script>
+    }
+  });
+</script>
+
+
+
+
+

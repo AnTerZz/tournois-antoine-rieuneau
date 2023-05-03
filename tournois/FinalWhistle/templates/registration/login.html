@@ -17,8 +17,6 @@
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:index' %}">Tournois</a></li>
-                    <li class="nav-item"><a class="nav-link" href="matchs.html">Matchs</a></li>
-                    <li class="nav-item"><a class="nav-link" href="teams.html">Equipes</a></li>
                 </ul>
                 {% if user.is_authenticated %}
                     <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>

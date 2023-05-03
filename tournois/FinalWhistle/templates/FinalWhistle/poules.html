@@ -26,7 +26,7 @@
             </div>
             
 
-            <div id="map" class="row" style="text-align: center; height:300px">
+            <div id="map" class="row leaflet-gl-layer maplibregl-map mapboxgl-map" style="text-align: center; height:300px">
 
             {{tournament.get_stadiums|json_script:"stadiums"}}
             {{tournament.get_games|json_script:"games"}}   

@@ -22,7 +22,7 @@ class Tournament(models.Model):
         return stadiums
     
     def get_games(self):
-        games = list(Game.objects.filter(poule__tournament = self).values('stadium','home_team__name','away_team__name'))
+        games = list(Game.objects.filter(poule__tournament = self).values('stadium','home_team__name','away_team__name','poule__number'))
         return games    
  
     

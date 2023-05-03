@@ -1,12 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from .models import Tournament, Game, Comment, Stadium
+
+from .models import Tournament, Game, Comment, Stadium, Team, Poule, Round
+
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core import serializers
 from django.db.models import Q
-
-
+import json
 
 
 #Base index view which displays all the tournaments in the database
@@ -27,7 +27,16 @@ class PouleView(generic.DetailView):
         
         return Tournament.objects.order_by('name')
     
+
+    def get_context_data(self, **kwargs):
+        context=super(PouleView,self).get_context_data(**kwargs)
+        context['tournoi'] = Tournament.objects.get(pk=self.kwargs["pk"])
+        tournoi = Tournament.objects.get(pk=self.kwargs["pk"])
+        context['list_rounds'] = tournoi.round_set.all()
+        return context
     
+    
+
 #DetailView which loads the match template and displays information on the game, also handles the comment post function
 class MatchView(generic.DetailView):
     template_name = 'FinalWhistle/match.html'
@@ -38,8 +47,11 @@ class MatchView(generic.DetailView):
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
         comments_connected = Comment.objects.filter(game=self.get_object()).order_by('-date')
+        data['goals_context'] = team_goals(self.kwargs["pk"])
         data['comments'] = comments_connected
         return data
+    
+    
     
     #post function when a new comment is added
     def post(self, request, *args, **kwargs):
@@ -48,7 +60,6 @@ class MatchView(generic.DetailView):
                                   game=self.get_object())
         new_comment.save()
         return self.get(self, request, *args, **kwargs)
-
 
 #UpdateView which allows an authenticated user to update his comments' 'body'
 class EditCommentView(LoginRequiredMixin, generic.UpdateView):
@@ -70,6 +81,144 @@ class EditCommentView(LoginRequiredMixin, generic.UpdateView):
 def custom_404(request, exception):
     return render(request, 'FinalWhistle/404.html', status=404)
 
+#Methode pour creer un match de Round avec les qualifies du Round precedent, qui n'est pas une poule
+def create_match_from_round(nbr_matchs, previous_round, current_round):
+    for j in range(0, nbr_matchs, 2):
+        team1 = previous_round.next_qualified()[j]
+        team2 = previous_round.next_qualified()[j+1]
+        Game(home_team=team1, away_team=team2,round = current_round).save()
+    current_round.round_filled=1
+    current_round.save()
+    
+#Methode pour creer un match de Round avec les qualifies d'une poule
+def create_match_from_poule(tournoi, round):
+    for poule in tournoi.poule_set.all():
+        team1 = poule.classement()[0]
+        team2 = poule.classement()[1]
+        Game(home_team=team1, away_team=team2,round = round).save()
+    round.round_filled=1
+    round.save()
+
+#Vue de l'arborescence des matchs d'un tournoi
+def TournamentTree(request, tournoi_id):
+    tournoi = get_object_or_404(Tournament, pk = tournoi_id)
+    nbr_matchs_poules = tournoi.poule_set.all().count()
+    for i in range(0, nbr_matchs_poules):
+        print(i)
+        nbr_matchs=int(nbr_matchs_poules/(2**i))
+        print(nbr_matchs)
+        
+        #Case where the next round is preceded by draws
+        if i == 0:
+            print("previous round is draws")
+            if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
+                print("using existing round")
+                existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
+                if existant_round.round_filled==0:
+                    existant_round.game_set.all().delete()
+                    print("filling round")
+                    create_match_from_poule(tournoi, existant_round)
+                    print(existant_round.round_filled)
+            else:
+                print("creating new round")
+                new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
+                new_round.save()
+                print(new_round)  
+                create_match_from_poule(tournoi, new_round)
+                
+        #Case where the next round isn't preceded by draws
+        else:
+            print("previous round isn't draws")
+            previous_round = Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs*2)[0]
+            if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
+                print("using existing round")
+                
+                existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
+                
+                if existant_round.round_filled==0 and previous_round.next_qualified() != None:
+                    existant_round.game_set.all().delete()
+                    create_match_from_round(nbr_matchs, previous_round, existant_round)
+            else:
+                print("creating new round")
+                new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
+                new_round.save()
+                if previous_round.next_qualified() != None:
+                    create_match_from_round(nbr_matchs, previous_round, new_round)
+                    
+    list_rounds=tournoi.round_set.all()
+    return render(request, 'FinalWhistle/tree.html', context= {'tournoi':tournoi, 'list_rounds' : list_rounds})
+                    
+        
+                       
+            
+                
+                    
+            
+            
+
+
+
+def scatter_plot(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    teams = tournament.team_set.all()
+    data = [(team.goals_scored(), team.goals_conceded()) for team in teams]
+    context = {'data': data, 'tournament': tournament} # Add tournament to the context
+    return render(request, 'FinalWhistle/scatter_plot.html', context)
+
+def goal_plot(request, tournament_id):
+    tournament = Tournament.objects.get(id=tournament_id)
+    teams = tournament.team_set.all()
+    data = [(team.goals_scored(), team.goals_conceded()) for team in teams]
+    context = {'data': data, 'tournament': tournament} # Add team names to the context
+    return render(request, 'FinalWhistle/goal_plot.html', context)
+
+
+import json
+
+
+def team_goals(pk):
+    game = Game.objects.get(id=pk)
+    team_home = game.home_team
+    team_away = game.away_team
+    games_home = Game.objects.filter(Q(home_team=team_home) | Q(away_team=team_home)).order_by('date')
+    games_away = Game.objects.filter(Q(home_team=team_away) | Q(away_team=team_away)).order_by('date')
+    scores_home = []
+    opponent_names_home = []
+    game_dates_home = []
+    for game in games_home:
+        if game.home_team == team_home:
+            scores_home.append(game.home_score)
+            opponent_names_home.append(game.away_team.name)
+            game_dates_home.append(game.date.strftime("%b %d, %Y"))
+        else:
+            scores_home.append(game.away_score)
+            opponent_names_home.append(game.home_team.name)
+            game_dates_home.append(game.date.strftime("%b %d, %Y"))
+    score_data_home = json.dumps(scores_home)
+    opponent_names_away = []
+    game_dates_away = []
+    scores_away = []
+    for game in games_away:
+        if game.home_team == team_away:
+            scores_away.append(game.home_score)
+            opponent_names_away.append(game.away_team.name)
+            game_dates_away.append(game.date.strftime("%b %d, %Y"))
+        else:
+            scores_away.append(game.away_score)
+            opponent_names_away.append(game.home_team.name)
+            game_dates_away.append(game.date.strftime("%b %d, %Y"))
+    score_data_away = json.dumps(scores_away)
+    context = {
+        'score_data_home': score_data_home,
+        'score_data_away': score_data_away,
+        'opponent_names_home': opponent_names_home,
+        'opponent_names_away': opponent_names_away,
+        'game_dates_home': game_dates_home,
+        'game_dates_away': game_dates_away,
+        'home_team': team_home,
+        'away_team': team_away,
+    }
+    return context
 
 #Search
 def search(request):
@@ -110,4 +259,5 @@ def search(request):
 def map_view(request):
     stadiums = list(Stadium.objects.values('name','latitude','longitude')) 
     return render(request, 'FinalWhistle/test_map.html', context={'stadiums':stadiums}) 
+
 

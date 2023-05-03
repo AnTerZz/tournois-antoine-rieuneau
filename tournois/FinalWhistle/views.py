@@ -1,9 +1,11 @@
-from django.shortcuts import render,get_list_or_404
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from .models import Tournament, Game, Comment, Team
+from .models import Tournament, Game, Comment, Stadium
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core import serializers
 from django.db.models import Q
+
 
 
 
@@ -20,10 +22,10 @@ class IndexView(generic.ListView):
 #DetailView which loads the poule template to show all the poules in a tournament and the poule information (games/scores)
 class PouleView(generic.DetailView):
     template_name = 'FinalWhistle/poules.html'
+    
     def get_queryset(self):
         
         return Tournament.objects.order_by('name')
-    
     
     
 #DetailView which loads the match template and displays information on the game, also handles the comment post function
@@ -68,6 +70,7 @@ class EditCommentView(LoginRequiredMixin, generic.UpdateView):
 def custom_404(request, exception):
     return render(request, 'FinalWhistle/404.html', status=404)
 
+
 #Search
 def search(request):
         query = request.GET.get('q')
@@ -103,3 +106,8 @@ def search(request):
                 
         return render(request, 'FinalWhistle/search.html', {'tournament_list': tournament_list, 
                                                            'team_list':team_list, "game_list":game_list})
+
+def map_view(request):
+    stadiums = list(Stadium.objects.values('name','latitude','longitude')) 
+    return render(request, 'FinalWhistle/test_map.html', context={'stadiums':stadiums}) 
+

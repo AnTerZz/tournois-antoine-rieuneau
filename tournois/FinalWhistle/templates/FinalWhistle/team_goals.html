@@ -1,0 +1,43 @@
+{%load static%}
+  
+  <!-- Add a canvas element for the scatter plot -->
+  <canvas id="team-goals"></canvas>
+  
+  <!-- Include Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+  <!--<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>-->
+
+  <script>
+    const scoreData_home = {{ score_data_home }};
+    const scoreData_away = {{ score_data_away }};
+    const ctx = document.getElementById('team-goals').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: Array.from(Array(scoreData_home.length).keys()).map(i => i + 1),
+        datasets: [{
+          label: '{{ team_name_home }}',
+          data: scoreData_home,
+          borderColor: 'rgba(36, 40, 91)',
+          backgroundColor: 'rgba(36, 40, 91, 0.2)',
+          borderWidth: 1
+        }, {
+            label: '{{ team_name_away }}',
+            data: scoreData_away,
+            borderColor: 'rgba(255, 210, 0)',
+            backgroundColor: 'rgba(255, 210, 0, 0.2)',
+            borderWidth: 1
+          }]
+        
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+  </script>

@@ -85,3 +85,36 @@ def goal_plot(request, tournament_id):
     data = [(team.goals_scored(), team.goals_conceded()) for team in teams]
     context = {'data': data, 'tournament': tournament} # Add team names to the context
     return render(request, 'FinalWhistle/goal_plot.html', context)
+
+def team2_goals(request, pk):
+    data = Game.objects.get(id=pk)
+    return render(request, 'FinalWhistle/team_goals.html', data)
+
+from django.db.models import Q
+import json
+
+def team_goals(request, pk):
+    game = Game.objects.get(id=pk)
+    team_home = game.home_team
+    team_away = game.away_team
+    games_home = Game.objects.filter(Q(home_team=team_home) | Q(away_team=team_home)).order_by('date')
+    games_away = Game.objects.filter(Q(home_team=team_away) | Q(away_team=team_away)).order_by('date')
+    scores_home = []
+    for game in games_home:
+        if game.home_team == team_home:
+            scores_home.append(game.home_score)
+        else:
+            scores_home.append(game.away_score)
+    score_data_home = json.dumps(scores_home)
+    scores_away = []
+    for game in games_away:
+        if game.home_team == team_away:
+            scores_away.append(game.home_score)
+        else:
+            scores_away.append(game.away_score)
+    score_data_away = json.dumps(scores_away)
+    context = {
+        'score_data_home': score_data_home,
+        'score_data_away': score_data_away,
+    }
+    return render(request, 'FinalWhistle/team_goals.html', context)

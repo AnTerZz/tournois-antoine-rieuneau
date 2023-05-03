@@ -222,42 +222,38 @@ def team_goals(pk):
 
 #Search
 def search(request):
-        query = request.GET.get('q')
-        search_mode = request.GET.get('search_mode')
-        game_date = request.GET.get('date')
-        game_location = request.GET.get('location')
-        home_team = request.GET.get('home_team')
-        away_team = request.GET.get('away_team')
-        home_score = request.GET.get('home_score')
-        away_score = request.GET.get('away_score')
-        tournament_list = None
-        team_list = None
-        game_list = None
+    query = request.GET.get('q')
+    search_mode = request.GET.get('search_mode')
+    game_date = request.GET.get('date')
+    game_location = request.GET.get('location')
+    home_team = request.GET.get('home_team')
+    away_team = request.GET.get('away_team')
+    home_score = request.GET.get('home_score')
+    away_score = request.GET.get('away_score')
+    tournament_list = None
+    team_list = None
+    game_list = None
+    
+    if not (game_date or game_location or home_team or away_team or home_score or away_score):
+        #two modes for searching tournaments and teams
+        if search_mode == 'Tournament':
+            tournament_list = Tournament.objects.filter(name__contains=query).union(
+            Tournament.objects.filter(location__contains=query))
+        elif search_mode == 'Team':
+            team_list = Team.objects.filter(name__icontains=query)
         
-        if not (game_date or game_location or home_team or away_team or home_score or away_score):
-            #two modes for searching tournaments and teams
-            if search_mode == 'Tournament':
-                tournament_list = Tournament.objects.filter(name__contains=query).union(
-                Tournament.objects.filter(location__contains=query))
-            elif search_mode == 'Team':
-                team_list = Team.objects.filter(name__icontains=query)
+    #filter of matches
+    query1 = ((Q(date__contains=game_date) | Q(date__isnull=True)) 
+                & (Q(location__contains=game_location) | Q(location__isnull=True))
+                & (Q(home_score__contains=home_score) | Q(home_score__isnull=True))
+                & (Q(away_score__contains=away_score) | Q(away_score__isnull=True))
+                & (Q(home_team__name__contains=home_team) | Q(home_team__name__isnull=True))
+                & (Q(away_team__name__contains=away_team) | Q(away_team__name__isnull=True)))
+    if query1:
+        game_list = Game.objects.order_by("-date").filter(query1)
+
             
-        #filter of matches
-        query1 = ((Q(date__contains=game_date) | Q(date__isnull=True)) 
-                    & (Q(location__contains=game_location) | Q(location__isnull=True))
-                    & (Q(home_score__contains=home_score) | Q(home_score__isnull=True))
-                    & (Q(away_score__contains=away_score) | Q(away_score__isnull=True))
-                    & (Q(home_team__name__contains=home_team) | Q(home_team__name__isnull=True))
-                    & (Q(away_team__name__contains=away_team) | Q(away_team__name__isnull=True)))
-        if query1:
-            game_list = Game.objects.order_by("-date").filter(query1)
-
-                
-        return render(request, 'FinalWhistle/search.html', {'tournament_list': tournament_list, 
-                                                           'team_list':team_list, "game_list":game_list})
-
-def map_view(request):
-    stadiums = list(Stadium.objects.values('name','latitude','longitude')) 
-    return render(request, 'FinalWhistle/test_map.html', context={'stadiums':stadiums}) 
+    return render(request, 'FinalWhistle/search.html', {'tournament_list': tournament_list, 
+                                                        'team_list':team_list, "game_list":game_list})
 
 

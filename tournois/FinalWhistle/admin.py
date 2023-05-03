@@ -37,8 +37,8 @@ class CommentAdmin(admin.ModelAdmin):
 
 class GameAdmin(admin.ModelAdmin):
     inlines=[CommentInline]
-    list_display = ('date', 'location', 'home_team', 'away_team','poule','home_score','away_score')
-    search_fields = ('location', 'home_team','away_team','poule')
+    list_display = ('date', 'stadium', 'home_team', 'away_team','poule','home_score','away_score')
+    search_fields = ('stadium__name', 'home_team__name','away_team__name','poule__number')
     
 
 admin.site.register(Tournament)

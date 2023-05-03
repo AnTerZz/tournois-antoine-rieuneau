@@ -62,6 +62,11 @@
         </div>
     </section>
 
+    
+    <div style="height: 1000px; width: 1000px; justify-content: center; align-items: center; margin-left: auto; margin-right: auto">
+        {% include 'FinalWhistle/team_goals.html' with goals_context=goals_context  %}
+    </div>
+
 
     <!--Shows a textarea to submit a new comment if user is authenticated. Prompts the user to login if he is not authenticated-->
     <section style="margin-top: -87px;margin-bottom: 48px;">
@@ -84,9 +89,6 @@
                     <div class="my-2"><a class="btn btn-light fs-5 py-2 px-4" role="button" href="{% url 'login' %}?next={{ request.path }}">Connexion</a></div>
                 </div>
             {% endif %}
-
-
-
 
 
             <!--Loops through comments on a match to display them-->

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.forms import IntegerField
 from django.db.models import F
+import json
 
 #Tournament model, keeps important information on the tournament, self-explanatory
 class Tournament(models.Model):
@@ -91,8 +92,6 @@ class Game(models.Model):
     
     def get_stadium(self):
         return list(Stadium.objects.filter(pk=self.stadium.pk).values('name','latitude','longitude'))
-    
-    
 
     
     

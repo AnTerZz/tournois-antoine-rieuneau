@@ -12,4 +12,6 @@ urlpatterns = [
     path('tournois/<int:tournament_id>/scatter_plot/', views.scatter_plot, name='scatter_plot'),
     path('tournois/<int:tournament_id>/goal_plot/', views.goal_plot, name='goal_plot'),
     path('match/<int:pk>/team_goals/', views.team_goals, name='team_goals'),
+    path('search/', views.search, name='search'),
+    path('map/', views.map_view, name='test_map'),
 ]

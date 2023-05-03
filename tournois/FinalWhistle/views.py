@@ -24,6 +24,12 @@ class PouleView(generic.DetailView):
     def get_queryset(self):
         return Tournament.objects.order_by('name')
     
+    def get_context_data(self, **kwargs):
+        context=super(PouleView,self).get_context_data(**kwargs)
+        context['tournoi'] = Tournament.objects.get(pk=self.kwargs["pk"])
+        tournoi = Tournament.objects.get(pk=self.kwargs["pk"])
+        context['list_rounds'] = tournoi.round_set.all()
+        return context
     
     
 #DetailView which loads the match template and displays information on the game, also handles the comment post function

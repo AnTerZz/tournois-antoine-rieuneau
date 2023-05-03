@@ -1,22 +1,104 @@
-{% extends 'FinalWhistle/base.html' %}
 
 
-
+{%load rounds%}
 {%load static%}
-{% block content %}
+<head>
+    <link rel="stylesheet" href="{% static 'FinalWhistle/assets/css/tree.css'%}">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Holtwood+One+SC' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script|Herr+Von+Muellerhoff' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Istok+Web|Roboto+Condensed:700' rel='stylesheet' type='text/css'>
+</head>
+
+{%block content%}
 <body>
-    {%for round in list_rounds%}
-        {%if round.round_filled == 1%}
-            <h1>{{round.match_quantity}}eme de finale</h1>
-            {%for match in round.game_set.all%}
-                <h2>Match</h2>
-                <p>{{match.home_team}}</p>
-                <p>{{match.away_team}}</p>
-            {%endfor%}
-        {%else%}
-            <p>Previous round not finished yet</p>
-        {%endif%}
-    
-    {%endfor%}
+
+<div class = "tree-container">
+    <section id="bracket">
+        <div class="container">
+            <div class="split split-one">
+                {%for round in list_rounds%}
+                    {%if round.match_quantity == 4%}
+                        <div class="round round-one current">
+                            {%if round.round_filled == 1%}
+                                <div class="round-details">{{round.match_quantity|title}}<br/></div>
+                                {%for match in round.game_set.all%}
+                                    {%if match.away_score != None and match.home_score != None%}
+                                        <div class = "current">
+                                            <ul class="matchup">
+                                                <li class="team team-top">{{match.home_team}}<span class="score">{{match.home_score}}</span></li>
+                                                <li class="team team-bottom">{{match.away_team}}<span class="score">{{match.away_score}}</span></li>
+                                            </ul>
+                                        </div>
+                                    {%else%}
+                                        <ul class="matchup">
+                                            <li class="team team-top">{{match.home_team}}<span class="score">0</span></li>
+                                            <li class="team team-bottom">{{match.away_team}}<span class="score">0</span></li>
+                                        </ul>  
+                                    {%endif%}
+                                {%endfor%}
+                            {%else%}
+                                <p>Previous round not finished yet</p>
+                            {%endif%}
+                        </div>
+                    {%elif round.match_quantity == 2%}
+                        <div class="round round-two">
+                            {%if round.round_filled == 1%}
+                                <div class="round-details">{{round.match_quantity|title}}<br/></div>
+                                {%for match in round.game_set.all%}
+                                    {%if match.away_score != None and match.home_score != None%}
+                                        <div class = "current">
+                                            <ul class="matchup">
+                                                <li class="team team-top">{{match.home_team}}<span class="score">{{match.home_score}}</span></li>
+                                                <li class="team team-bottom">{{match.away_team}}<span class="score">{{match.away_score}}</span></li>
+                                            </ul>
+                                        </div>
+                                    {%else%}
+                                        <ul class="matchup">
+                                            <li class="team team-top">{{match.home_team}}<span class="score">0</span></li>
+                                            <li class="team team-bottom">{{match.away_team}}<span class="score">0</span></li>
+                                        </ul>  
+                                    {%endif%}
+                                {%endfor%}
+                            {%else%}
+                                <p>Previous round not finished yet</p>
+                            {%endif%}
+                        </div>
+                    {%elif round.match_quantity == 1%}
+                        <div class="round round-three ">
+                            {%if round.round_filled == 1%}
+                                <div class="round-details">{{round.match_quantity|title}}<br/></div>
+                                {%for match in round.game_set.all%}
+                                    {%if match.away_score != None and match.home_score != None%}
+                                        <div class = "current">
+                                            <ul class="matchup">
+                                                <li class="team team-top">{{match.home_team}}<span class="score">{{match.home_score}}</span></li>
+                                                <li class="team team-bottom">{{match.away_team}}<span class="score">{{match.away_score}}</span></li>
+                                            </ul>
+                                        </div>
+                                    {%else%}
+                                        <ul class="matchup">
+                                            <li class="team team-top">{{match.home_team}}<span class="score">0</span></li>
+                                            <li class="team team-bottom">{{match.away_team}}<span class="score">0</span></li>
+                                        </ul>  
+                                    {%endif%}
+                                {%endfor%}
+                            {%else%}
+                                <p>Previous round not finished yet</p>
+                            {%endif%}
+                        </div>
+                    {%endif%} 
+                {%endfor%}                 
+            </div> 
+        </div>
+    </section>
+</div>
+
+
+
 </body>
-{% endblock %}
+{%endblock%}

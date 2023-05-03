@@ -10,5 +10,6 @@ urlpatterns = [
     path('tournois/<int:pk>/', views.PouleView.as_view(), name='poule'),
     path('match/<int:pk>', views.MatchView.as_view(), name='match'),
     path('comment/<int:pk>/edit/', views.EditCommentView.as_view(), name='edit_comment'),
+    path('search/', views.search, name='search'),
     path('map/', views.map_view, name='test_map'),
 ]

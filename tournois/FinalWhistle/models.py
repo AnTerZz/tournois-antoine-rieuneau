@@ -34,6 +34,28 @@ class Poule(models.Model):
     def __str__(self):
         return f'Poule {self.number}'
     
+    #Method to return the list of teams in reverse order of their points
+    def classement(self):
+        return sorted(self.team_set.all(), key = Team.points, reverse=True)
+    
+class Round(models.Model):
+    match_quantity=models.IntegerField()
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    round_filled= models.IntegerField(default=0)
+    
+    def next_qualified(self):
+        list_qualified = []
+        for game in self.game_set.all():
+            if game.home_score == None or game.away_score == None:
+                return None
+            else:
+                if game.home_score > game.away_score:
+                    list_qualified.append(game.home_team)
+                elif game.home_score < game.away_score:
+                    list_qualified.append(game.away_team)
+        return list_qualified
+    
+    
 
 #Team model, self explanatory
 class Team(models.Model):
@@ -41,6 +63,7 @@ class Team(models.Model):
     manager = models.CharField(max_length=200)
     players = models.TextField()
     poule = models.ForeignKey(Poule, on_delete=models.CASCADE)
+    round = models.ManyToManyField(Round, null = True)
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     
     #Method to return the players as a list instead of a single string
@@ -69,6 +92,8 @@ class Team(models.Model):
         drawn = Game.objects.filter(home_team=self, poule=self.poule, home_score=F('away_score')) | \
                 Game.objects.filter(away_team=self, poule=self.poule, away_score=F('home_score'))
         return (3* won.count() + drawn.count()) 
+    
+
 
 class Stadium(models.Model):
     name = models.CharField(max_length=200)
@@ -79,14 +104,17 @@ class Stadium(models.Model):
     
 #Team model, self explanatory
 class Game(models.Model):
-    date = models.DateTimeField()
-    location = models.CharField(max_length=200)
+    date = models.DateTimeField(null = True, blank = True)
+    location = models.CharField(max_length=200, null = True, blank = True)
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_games')
     away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_games')
-    poule = models.ForeignKey(Poule, on_delete=models.CASCADE)
-    home_score = models.IntegerField()
-    away_score = models.IntegerField()
+    poule = models.ForeignKey(Poule, on_delete=models.CASCADE, null = True, blank = True)
+    round = models.ForeignKey(Round, on_delete=models.CASCADE, null=True, blank = True)
+    home_score = models.IntegerField(null = True, blank = True)
+    away_score = models.IntegerField(null = True, blank = True)
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE, null=True)
+
+
     def __date__(self):
         return self.date
     

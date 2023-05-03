@@ -3,6 +3,13 @@
 
 
 {%load static%}
+{%load rounds%}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{% static 'FinalWhistle/assets/css/tree.css'%}">
+    </style>
+</head>
 
 
 
@@ -84,6 +91,24 @@
                     </div>
                 </div>
             {%endfor%}
+
+
+            <div class="row" style="text-align: center;margin-top: 45px;background: rgb(36,40,91);">
+                <div class="col-md-6 text-center">
+                    <h1 style="text-align: center;margin: 20px;color: rgb(255,210,0);font-weight: bold;font-size: 36px;">Phases Eliminatoires</h1>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5 text-center text-md-start">
+                    <div style="text-align: center;"><a class="btn btn-light" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-tree" href="#collapse-tree" role="button" style="margin: 20px;">Voir plus</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row collapse" id="collapse-tree" style="text-align: center;margin-top: 0px;background: #eefdff;">
+                        
+                        {% include 'FinalWhistle\tree.html' with tournoi=tournament list_round=tournament.round_set.all%}
+                       
+            </div>
+
         
             <div class="row" style="text-align: center; margin-top: 70px">
                 <div class="col-md-6 text-center">
@@ -95,6 +120,6 @@
             </div>
         </div>
     </section>
-
+</body>
 
 {% endblock %}

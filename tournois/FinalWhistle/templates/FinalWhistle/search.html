@@ -43,24 +43,27 @@
             </div>
         </div>
     </header>
-
-    <!--Search-->
-    <div class="float-right pb-3">
+    
+    <!--Search dock-->
+    <hr>
+    <div class="float-right pb-3" style="text-align: center;margin-top: 0px;background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
         <form action="{% url 'FinalWhistle:search' %}" method="get">
-            <p style="text-align: center;">
-                <input type="text" style="width:400px" name="q" placeholder="Search tournament name, location or team name...">
-                search target:
-                <select name="search_mode">
-                    <option value="Tournament">Tournoi</option>
-                    <option value="Team">Equipe</option>
-                    <option value="Game">Match</option>
-                </select>&nbsp&nbsp&nbsp&nbsp&nbsp
-                <!--Show the filter and search button-->
-                <a class="btn btn-primary" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-filter" href="#collapse-filter" role="button" >Filter for matches</a>
-                <button type="submit" class="btn btn-primary">Search</button>
+            <p  style="text-align: center;margin-top:0px;">
+                <div style ="padding-top:30px;padding-bottom:-10px;">
+                    <input type="text" style="width:400px" name="q" placeholder="Search tournament name, location or team name...">
+                    search target:
+                    <select name="search_mode">
+                        <option value="Tournament">Tournoi</option>
+                        <option value="Team">Equipe</option>
+                        <option value="Game">Match</option>
+                    </select>&nbsp&nbsp&nbsp&nbsp&nbsp
+                    <!--Show the filter and search button-->
+                    <a class="btn btn-black" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-filter" href="#collapse-filter" role="button" >Filter for matches</a>
+                    <button type="submit" class="btn btn-gray">Search</button>
+                </div>
             </p>
              <!--Hides the information on each poule in a collapse for better ergonomics-->
-            <div class="row collapse" id="collapse-filter" style="text-align: center;margin-top: 0px;background: #eefdff;">
+            <div class="row collapse" id="collapse-filter" style="text-align: center;margin-top: 0px;background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
                 <p style="margin: 10px">
                     Match date: <input type="date" name="date" id="date"> &nbsp &nbsp
                     Match lieu: <input type="text" name="location" placeholder="Location">
@@ -72,11 +75,16 @@
             </div>
         </form>
     </div>
+    
 
     <!--Loops through all tournaments and displays the first 3, the rest is displayed in a collapse which can be activated by pressing a view more button-->
     {% if tournament_list %}
         <section>
             <div class="container text-center py-4 py-xl-5">
+                <!--show the number of results-->
+                <div>
+                    <p>{{tournament_list.count}} tournoi{{ tournament_list.count|pluralize:"s" }} {{ tournament_list.count|pluralize:"est,sont" }} trouvé{{ tournament_list.count|pluralize:"s" }}</p>
+                </div>
                 {% for tournament in tournament_list|slice:":3" %}
                     <div class="col-md-12 col-lg-12 offset-lg-0" style="border-radius: 20px;padding: 0;margin-bottom: 3px;border: 2px solid var(--bs-yellow);background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
                         <h1 class="text-center" style="font-family: Raleway, sans-serif;color: var(--bs-indigo);"><a href="{% url 'FinalWhistle:poule' tournament.id %}">{{ tournament.name }}</a></h1>
@@ -108,6 +116,10 @@
     {% elif team_list%}
     <section>
         <div class="container text-center py-4 py-xl-5">
+            <!--show the number of results-->
+            <div>
+                <p>{{team_list.count}} équipe{{ team_list.count|pluralize:"s" }} {{ team_list.count|pluralize:"est,sont" }} trouvé{{ team_list.count|pluralize:"es" }}</p>
+            </div>
             {% for team in team_list|slice:":3" %}
                 <div class="col-md-12 col-lg-12 offset-lg-0" style="border-radius: 20px;padding: 0;margin-bottom: 3px;border: 2px solid var(--bs-yellow);background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
                     <h1 class="text-center" style="font-family: Raleway, sans-serif;color: var(--bs-indigo);">{{ team.name }}</h1>
@@ -137,10 +149,14 @@
 
         </div>
     </section>
-    <!--search mode for matces-->
+    <!--search mode for matches-->
     {% elif game_list%}
     <section>
         <div class="container text-center py-4 py-xl-5">
+            <!--show the number of results-->
+            <div>
+                <p>{{game_list.count}} match{{ game_list.count|pluralize:"es" }} {{ game_list.count|pluralize:"est,sont" }} trouvé{{ game_list.count|pluralize:"s" }}</p>
+            </div>
             {% for game in game_list|slice:":3"%}
                 <div class="col-md-12 col-lg-12 offset-lg-0" style="border-radius: 20px;padding: 0;margin-bottom: 3px;border: 2px solid var(--bs-yellow);background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
                     <h1 class="text-center" style="font-family: Raleway, sans-serif;color: var(--bs-indigo);"><a class="link-primary" href="{% url 'FinalWhistle:match' game.id %}" >{{game.home_score}} {{ game.home_team }} vs {{ game.away_team }} {{game.away_score}} </a></h1>
@@ -152,7 +168,7 @@
                 </div>
             {% endfor %}
         
-
+            <!--hide the other information-->
             <div><a class="btn btn-outline-primary" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-1" href="#collapse-1" role="button" style="margin-top: 37px;margin-bottom: 17px;">Voir plus</a>
                 <div class="collapse" id="collapse-1">
                     {% for game in game_list|slice:":3"%}

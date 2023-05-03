@@ -10,7 +10,7 @@ urlpatterns = [
     path('match/<int:pk>', views.MatchView.as_view(), name='match'),
     path('comment/<int:pk>/edit/', views.EditCommentView.as_view(), name='edit_comment'),
 
-    path('tournois/<int:tournoi_id>/arborescence', views.TournamentTree, name = 'tree' )
+    path('tournois/<int:tournoi_id>/arborescence', views.TournamentTree, name = 'tree' ),
 
     path('tournois/<int:tournament_id>/scatter_plot/', views.scatter_plot, name='scatter_plot'),
     path('tournois/<int:tournament_id>/goal_plot/', views.goal_plot, name='goal_plot'),

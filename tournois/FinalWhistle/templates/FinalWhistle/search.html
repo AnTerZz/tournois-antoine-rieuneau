@@ -73,7 +73,6 @@
         </form>
     </div>
 
-
     <!--Loops through all tournaments and displays the first 3, the rest is displayed in a collapse which can be activated by pressing a view more button-->
     {% if tournament_list %}
         <section>
@@ -104,8 +103,58 @@
 
             </div>
         </section>
+    {% elif team_list%}
+    <section>
+        <div class="container text-center py-4 py-xl-5">
+            {% for team in team_list|slice:":3" %}
+                <div class="col-md-12 col-lg-12 offset-lg-0" style="border-radius: 20px;padding: 0;margin-bottom: 3px;border: 2px solid var(--bs-yellow);background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
+                    <h1 class="text-center" style="font-family: Raleway, sans-serif;color: var(--bs-indigo);">{{ team.name }}</h1>
+
+                    <p class="text-center">Tournoi : {{team.tournament}}</p>
+                    <p class="text-center" style="margin-top: -21px;">Poule : {{team.poule}} </p>
+                    <p class="text-center" style="margin-top: -21px;">Manager : {{team.manager}} </p>
+                    <p class="text-center" style="margin-top: -21px;"> Scored: {{team.goals_scored}} &nbsp &nbsp conceded: {{team.goals_conceded}} &nbsp &nbsp points: {{team.points}} </p>
+                </div>
+            {% endfor %}
+
+            
+            <div><a class="btn btn-outline-primary" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-1" href="#collapse-1" role="button" style="margin-top: 37px;margin-bottom: 17px;">Voir plus</a>
+                <div class="collapse" id="collapse-1">
+                    {% for team in team_list|slice:"3:" %}
+                        <div class="col-md-12 col-lg-12 offset-lg-0" style="border-radius: 20px;padding: 0;margin-bottom: 3px;border: 2px solid var(--bs-yellow);background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
+                            <h1 class="text-center" style="font-family: Raleway, sans-serif;color: var(--bs-indigo);">{{ team.name }}</h1>
+        
+                            <p class="text-center">Tournoi : {{team.tournament}}</p>
+                            <p class="text-center" style="margin-top: -21px;">Poule : {{team.poule}} </p>
+                            <p class="text-center" style="margin-top: -21px;">Manager : {{team.manager}} </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+
+        </div>
+    </section>
+
+    {% elif game_list%}
+    <section>
+        <div class="container text-center py-4 py-xl-5">
+            {% for game in game_list%}
+                <div class="col-md-12 col-lg-12 offset-lg-0" style="border-radius: 20px;padding: 0;margin-bottom: 3px;border: 2px solid var(--bs-yellow);background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
+                    <h1 class="text-center" style="font-family: Raleway, sans-serif;color: var(--bs-indigo);"><a class="link-primary" href="{% url 'FinalWhistle:match' game.id %}" >{{game.home_score}} {{ game.home_team }} vs {{ game.away_team }} {{game.away_score}} </a></h1>
+                   
+                    <p class="text-center">Tournoi : {{game.date}}</p>
+                    <p class="text-center" style="margin-top: -21px;">Location : {{game.location}} </p>
+                    <p class="text-center" style="margin-top: -21px;">Poule : {{game.poule.tournament}} </p>
+                   
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+
     {% else %}
-            <p style="text-align:center">There are no more Tournaments</p>
+            <p style="text-align:center">There is no result</p>
     {% endif %}
 
     <!--Prompts the user to login if he is not authenticated-->

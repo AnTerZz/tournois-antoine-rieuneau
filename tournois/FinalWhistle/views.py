@@ -1,9 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_list_or_404
 from django.urls import reverse, reverse_lazy
-from .models import Tournament, Game, Comment
+from .models import Tournament, Game, Comment, Team
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.db.models import Q
 
 
 
@@ -17,11 +17,11 @@ class IndexView(generic.ListView):
         return Tournament.objects.order_by('name')
     
 
-
 #DetailView which loads the poule template to show all the poules in a tournament and the poule information (games/scores)
 class PouleView(generic.DetailView):
     template_name = 'FinalWhistle/poules.html'
     def get_queryset(self):
+        
         return Tournament.objects.order_by('name')
     
     
@@ -67,3 +67,39 @@ class EditCommentView(LoginRequiredMixin, generic.UpdateView):
 #Custom 404 view, loads the right template
 def custom_404(request, exception):
     return render(request, 'FinalWhistle/404.html', status=404)
+
+#Search
+def search(request):
+        query = request.GET.get('q')
+        search_mode = request.GET.get('search_mode')
+        game_date = request.GET.get('date')
+        game_location = request.GET.get('location')
+        home_team = request.GET.get('home_team')
+        away_team = request.GET.get('away_team')
+        home_score = request.GET.get('home_score')
+        away_score = request.GET.get('away_score')
+        tournament_list = None
+        team_list = None
+        game_list = None
+        
+        if not (game_date or game_location or home_team or away_team or home_score or away_score):
+            #two modes for searching tournaments and teams
+            if search_mode == 'Tournament':
+                tournament_list = Tournament.objects.filter(name__contains=query).union(
+                Tournament.objects.filter(location__contains=query))
+            elif search_mode == 'Team':
+                team_list = Team.objects.filter(name__icontains=query)
+            
+        #filter of matches
+        query1 = ((Q(date__contains=game_date) | Q(date__isnull=True)) 
+                    & (Q(location__contains=game_location) | Q(location__isnull=True))
+                    & (Q(home_score__contains=home_score) | Q(home_score__isnull=True))
+                    & (Q(away_score__contains=away_score) | Q(away_score__isnull=True))
+                    & (Q(home_team__name__contains=home_team) | Q(home_team__name__isnull=True))
+                    & (Q(away_team__name__contains=away_team) | Q(away_team__name__isnull=True)))
+        if query1:
+            game_list = Game.objects.order_by("-date").filter(query1)
+
+                
+        return render(request, 'FinalWhistle/search.html', {'tournament_list': tournament_list, 
+                                                           'team_list':team_list, "game_list":game_list})

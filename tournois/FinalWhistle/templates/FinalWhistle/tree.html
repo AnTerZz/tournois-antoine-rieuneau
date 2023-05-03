@@ -1,0 +1,22 @@
+{% extends 'FinalWhistle/base.html' %}
+
+
+
+{%load static%}
+{% block content %}
+<body>
+    {%for round in list_rounds%}
+        {%if round.round_filled == 1%}
+            <h1>{{round.match_quantity}}eme de finale</h1>
+            {%for match in round.game_set.all%}
+                <h2>Match</h2>
+                <p>{{match.home_team}}</p>
+                <p>{{match.away_team}}</p>
+            {%endfor%}
+        {%else%}
+            <p>Previous round not finished yet</p>
+        {%endif%}
+    
+    {%endfor%}
+</body>
+{% endblock %}

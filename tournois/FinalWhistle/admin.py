@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Tournament, Poule, Team, Game, Comment
+from .models import Tournament, Poule, Team, Game, Comment, Round
 
 
 #Group of inline classes to be added to the Admin classes below
@@ -17,10 +17,16 @@ class PouleInline(admin.TabularInline):
     extra = 1
 
 
+
 class PouleAdmin(admin.ModelAdmin):
     inlines = [GameInline,TeamInline]
     list_filter = ['number']
     search_fields = ['number']
+    
+class RoundAdmin(admin.ModelAdmin):
+    inlines = [GameInline]
+    list_filter = ['tournament', 'match_quantity']
+    search_fields = ['tournament', 'match_quantity']
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
@@ -37,3 +43,4 @@ admin.site.register(Tournament)
 admin.site.register(Team)
 admin.site.register(Game, GameAdmin)
 admin.site.register(Poule, PouleAdmin)
+admin.site.register(Round, RoundAdmin)

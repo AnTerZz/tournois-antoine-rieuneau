@@ -226,6 +226,7 @@ def search(request):
     search_mode = request.GET.get('search_mode')
     game_date = request.GET.get('date')
     game_location = request.GET.get('location')
+    game_stadium = request.GET.get('stadium')
     home_team = request.GET.get('home_team')
     away_team = request.GET.get('away_team')
     home_score = request.GET.get('home_score')
@@ -234,23 +235,29 @@ def search(request):
     team_list = None
     game_list = None
     
-    if not (game_date or game_location or home_team or away_team or home_score or away_score):
+    if not (game_date or game_location or game_stadium or home_team or away_team or home_score or away_score):
+        if query:
         #two modes for searching tournaments and teams
-        if search_mode == 'Tournament':
-            tournament_list = Tournament.objects.filter(name__contains=query).union(
-            Tournament.objects.filter(location__contains=query))
-        elif search_mode == 'Team':
-            team_list = Team.objects.filter(name__icontains=query)
-        
+            if search_mode == 'Tournament':
+                tournament_list = Tournament.objects.filter(name__contains=query).union(
+                Tournament.objects.filter(location__contains=query))
+            elif search_mode == 'Team':
+                team_list = Team.objects.filter(name__icontains=query)
+        else:
+            tournament_list = None
+            team_list = None
+            game_list = None
+    else:   
     #filter of matches
-    query1 = ((Q(date__contains=game_date) | Q(date__isnull=True)) 
-                & (Q(location__contains=game_location) | Q(location__isnull=True))
-                & (Q(home_score__contains=home_score) | Q(home_score__isnull=True))
-                & (Q(away_score__contains=away_score) | Q(away_score__isnull=True))
-                & (Q(home_team__name__contains=home_team) | Q(home_team__name__isnull=True))
-                & (Q(away_team__name__contains=away_team) | Q(away_team__name__isnull=True)))
-    if query1:
-        game_list = Game.objects.order_by("-date").filter(query1)
+        query1 = ((Q(date__contains=game_date) | Q(date__isnull=True))
+                    & (Q(stadium__name__contains=game_stadium) | Q(stadium__name__isnull=True))
+                    & (Q(poule__tournament__location__contains=game_location) | Q(poule__tournament__location__isnull=True))
+                    & (Q(home_score__contains=home_score) | Q(home_score__isnull=True))
+                    & (Q(away_score__contains=away_score) | Q(away_score__isnull=True))
+                    & (Q(home_team__name__contains=home_team) | Q(home_team__name__isnull=True))
+                    & (Q(away_team__name__contains=away_team) | Q(away_team__name__isnull=True)))
+        if query1:
+            game_list = Game.objects.order_by("-date").filter(query1)
 
             
     return render(request, 'FinalWhistle/search.html', {'tournament_list': tournament_list, 

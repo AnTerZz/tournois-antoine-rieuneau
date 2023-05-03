@@ -3,14 +3,27 @@
 
 
 {%load static%}
-
-
-
-{% block nav_items %}
-    <li class="nav-item" style="margin-left: 100px"><a class="nav-link active" href="{% url 'FinalWhistle:index' %}">Tournoi</a></li>
-{% endblock %}        
-    
 {% block content %}
+
+<body>
+    <nav class="navbar navbar-light navbar-expand-md fixed-top navbar-shrink py-3" id="mainNav">
+        <div class="container"><img class="img-fluid" data-bss-hover-animate="bounce" src="{% static 'FinalWhistle/assets/img/logocolours.png'%}" width="146" height="77" style="margin-bottom: 14px;width: 150px;"><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item" style="margin-left: 100px"><a class="nav-link active" href="{% url 'FinalWhistle:index' %}">Tournoi</a></li>
+                </ul>
+
+                <!--Displays a deconnection button if user is authenticated and a connection button if not-->
+                {% if user.is_authenticated %}
+                    <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
+                    <a class="btn btn-outline-primary shadow" role="button" href="{% url 'logout' %}?next={% url 'FinalWhistle:index' %}">Déconnexion</a>
+                {% else %}
+                    <a class="btn btn-primary shadow" role="button" href="{% url 'login' %}?next={% url 'FinalWhistle:index' %}">Connexion</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
     <header class="pt-5">
         <div class="container pt-4 pt-xl-5">
             <div class="row flex-grow-1 pt-5">
@@ -31,24 +44,26 @@
         </div>
     </header>
 
-    <!--Search-->
-    <div align-content="center">
-    <div class="float-right pb-3">
+    <!--Search dock-->
+    <hr>
+    <div class="float-right pb-3" style="text-align: center;margin-top: 0px;background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
         <form action="{% url 'FinalWhistle:search' %}" method="get">
-            <p style="text-align: center;">
-                <input type="text" style="width:400px" name="q" placeholder="Search tournament name, location or team name...">
-                search target:
-                <select name="search_mode">
-                    <option value="Tournament">Tournoi</option>
-                    <option value="Team">Equipe</option>
-                    <option value="Game">Match</option>
-                </select>&nbsp&nbsp&nbsp&nbsp&nbsp
-                <!--Show the filter and search button-->
-                <a class="btn btn-primary" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-filter" href="#collapse-filter" role="button" >Filter for matches</a>
-                <button type="submit" class="btn btn-primary">Search</button>
+            <p  style="text-align: center;margin-top:0px;">
+                <div style ="padding-top:30px;padding-bottom:-10px;">
+                    <input type="text" style="width:400px" name="q" placeholder="Search tournament name, location or team name...">
+                    search target:
+                    <select name="search_mode">
+                        <option value="Tournament">Tournoi</option>
+                        <option value="Team">Equipe</option>
+                        <option value="Game">Match</option>
+                    </select>&nbsp&nbsp&nbsp&nbsp&nbsp
+                    <!--Show the filter and search button-->
+                    <a class="btn btn-black" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-filter" href="#collapse-filter" role="button" >Filter for matches</a>
+                    <button type="submit" class="btn btn-gray">Search</button>
+                </div>
             </p>
              <!--Hides the information on each poule in a collapse for better ergonomics-->
-            <div class="row collapse" id="collapse-filter" style="text-align: center;margin-top: 0px;background: #eefdff;">
+            <div class="row collapse" id="collapse-filter" style="text-align: center;margin-top: 0px;background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
                 <p style="margin: 10px">
                     Match date: <input type="date" name="date" id="date"> &nbsp &nbsp
                     Match lieu: <input type="text" name="location" placeholder="Location">
@@ -59,7 +74,6 @@
                 </p>
             </div>
         </form>
-    </div>
     </div>
 
 

@@ -23,7 +23,7 @@
             <div class="split split-one">
                 {%for round in list_rounds%}
                     {%if round.match_quantity == 8%}
-                            <div class="round round-one">
+                            <div style="max-width:200px" class="round round-one">
                                 {%if round.round_filled == 1%}
                                     <div class="round-details">{{round.match_quantity|title}}<br/></div>
                                         {%for match in round.game_set.all%}
@@ -47,13 +47,13 @@
                                 {%endif%}
                             </div>
                     {%elif round.match_quantity == 4%}
-                        <div class="round round-one">
+                        <div style="max-width:200px" class="round round-one" >
                             {%if round.round_filled == 1%}
                                 <div class="round-details">{{round.match_quantity|title}}<br/></div>
                                     {%for match in round.game_set.all%}
                                         {%if match.away_score != None and match.home_score != None%}
-                                            <div class = "current">
-                                                <ul class="matchup">
+                                            <div class = "current" >
+                                                <ul style="margin-top:80px" class="matchup">
                                                     <li class="team team-top">{{match.home_team}}<span class="score">{{match.home_score}}</span></li>
                                                     <li class="team team-bottom">{{match.away_team}}<span class="score">{{match.away_score}}</span></li>
                                                 </ul>
@@ -71,7 +71,7 @@
                             {%endif%}
                         </div>
                     {%elif round.match_quantity == 2%}
-                        <div class="round round-two">
+                        <div style="max-width:200px" class="round round-two">
                             {%if round.round_filled == 1%}
                                 <div class="round-details">{{round.match_quantity|title}}<br/></div>
                                     {%for match in round.game_set.all%}
@@ -95,7 +95,7 @@
                             {%endif%}
                         </div>
                     {%elif round.match_quantity == 1%}
-                        <div class="round round-three ">
+                        <div style="max-width:200px" class="round round-three ">
                             {%if round.round_filled == 1%}
                                 <div class="round-details">{{round.match_quantity|title}}<br/></div>
                                     {%for match in round.game_set.all%}

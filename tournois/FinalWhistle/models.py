@@ -47,7 +47,7 @@ class Round(models.Model):
         list_qualified = []
         for game in self.game_set.all():
             if game.home_score == None or game.away_score == None:
-                return None
+                return []
             else:
                 if game.home_score > game.away_score:
                     list_qualified.append(game.home_team)

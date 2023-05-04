@@ -8,6 +8,7 @@ from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 import json
+import math
 
 
 #Base index view which displays all the tournaments in the database
@@ -22,27 +23,34 @@ class IndexView(generic.ListView):
 
 #Methode pour creer un match de Round avec les qualifies du Round precedent, qui n'est pas une poule
 def create_match_from_round(nbr_matchs, previous_round, current_round):
-    for j in range(0, nbr_matchs, 2):
+    for j in range(0, nbr_matchs*2, 2):
         print(previous_round.next_qualified())
         team1 = previous_round.next_qualified()[j]
         team2 = previous_round.next_qualified()[j+1]
-        Game(home_team=team1, away_team=team2,round = current_round).save()
+        game =Game(home_team=team1, away_team=team2,round = current_round)
+        game.save()
+        print(game)
     current_round.round_filled=1
     current_round.save()
     
 #Methode pour creer un match de Round avec les qualifies d'une poule
 def create_match_from_poule(tournoi, round):
-    for poule in tournoi.poule_set.all():
-        team1 = poule.classement()[0]
-        team2 = poule.classement()[1]
-        Game(home_team=team1, away_team=team2,round = round).save()
+    team1 = []
+    team2 = []
+    for poule in sorted(tournoi.poule_set.all(), key = lambda poule : poule.number):
+        team1.append(poule.classement()[0])
+        team2.append(poule.classement()[1])
+    for i in range(0,len(team1), 2):
+        Game(home_team=team1[i], away_team=team2[i+1],round = round).save()
+        Game(home_team=team1[i+1], away_team=team2[i],round = round).save()
     round.round_filled=1
     round.save()
     
 def TournamentTree(tournoi_id):
     tournoi = get_object_or_404(Tournament, pk = tournoi_id)
     nbr_matchs_poules = tournoi.poule_set.all().count()
-    for i in range(0, nbr_matchs_poules):
+    print(int(math.log2(nbr_matchs_poules)))
+    for i in range(0, int(math.log2(nbr_matchs_poules)+1)):
         print(i)
         nbr_matchs=int(nbr_matchs_poules/(2**i))
         print(nbr_matchs)
@@ -53,16 +61,16 @@ def TournamentTree(tournoi_id):
             if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
                 print("using existing round")
                 existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
+                
                 if existant_round.round_filled==0:
                     existant_round.game_set.all().delete()
                     print("filling round")
                     create_match_from_poule(tournoi, existant_round)
                     print(existant_round.round_filled)
             else:
-                print("creating new round")
+                print("creating new round draws")
                 new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
-                new_round.save()
-                print(new_round)  
+                new_round.save() 
                 create_match_from_poule(tournoi, new_round)
                 
         #Case where the next round isn't preceded by draws
@@ -71,7 +79,6 @@ def TournamentTree(tournoi_id):
             previous_round = Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs*2)[0]
             if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
                 print("using existing round")
-                
                 existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
                 
                 if existant_round.round_filled==0 and len(previous_round.next_qualified())!=0:
@@ -81,10 +88,11 @@ def TournamentTree(tournoi_id):
                 print("creating new round")
                 new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
                 new_round.save()
+                print(len(previous_round.next_qualified()))
                 if len(previous_round.next_qualified())!=0:
                     create_match_from_round(nbr_matchs, previous_round, new_round)
                     
-    list_rounds=tournoi.round_set.all()
+    list_rounds=sorted(tournoi.round_set.all(), key = lambda round : round.match_quantity, reverse = True)
     context= {'tournoi':tournoi, 'list_rounds' : list_rounds}
     return context   
 
@@ -102,11 +110,7 @@ class PouleView(generic.DetailView):
         context['list_rounds'] = tournoi.round_set.all()
         context.update(TournamentTree(self.kwargs["pk"]))
         return context
-    
-    def dispatch(self,request,*args,**kwargs):
-        pk = self.kwargs.get('pk')
-        
-        return super(PouleView,self).dispatch(request, *args, **kwargs)
+
     
     
     
@@ -156,63 +160,6 @@ class EditCommentView(LoginRequiredMixin, generic.UpdateView):
 #Custom 404 view, loads the right template
 def custom_404(request, exception):
     return render(request, 'FinalWhistle/404.html', status=404)
-
-
-#Vue de l'arborescence des matchs d'un tournoi
-def TournamentTree(tournoi_id):
-    tournoi = get_object_or_404(Tournament, pk = tournoi_id)
-    nbr_matchs_poules = tournoi.poule_set.all().count()
-    for i in range(0, nbr_matchs_poules):
-        print(i)
-        nbr_matchs=int(nbr_matchs_poules/(2**i))
-        print(nbr_matchs)
-        
-        #Case where the next round is preceded by draws
-        if i == 0:
-            print("previous round is draws")
-            if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
-                print("using existing round")
-                existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
-                if existant_round.round_filled==0:
-                    print("filling round")
-                    create_match_from_poule(tournoi, existant_round)
-                    print(existant_round.round_filled)
-            else:
-                print("creating new round")
-                new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
-                new_round.save()
-                print(new_round)  
-                create_match_from_poule(tournoi, new_round)
-                
-        #Case where the next round isn't preceded by draws
-        else:
-            print("previous round isn't draws")
-            previous_round = Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs*2)[0]
-            if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
-                print("using existing round")
-                
-                existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
-                
-                if existant_round.round_filled==0 and len(previous_round.next_qualified()) != 0:
-                    create_match_from_round(nbr_matchs, previous_round, existant_round)
-            else:
-                print("creating new round")
-                new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
-                new_round.save()
-                if previous_round.next_qualified() != None:
-                    create_match_from_round(nbr_matchs, previous_round, new_round)
-                    
-    list_rounds=tournoi.round_set.all()
-    context= {'tournoi':tournoi, 'list_rounds' : list_rounds}
-    return context
-                    
-        
-                       
-            
-                
-                    
-            
-            
 
 
 

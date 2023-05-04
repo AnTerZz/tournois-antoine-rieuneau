@@ -36,7 +36,8 @@
 
             {{tournament.get_stadiums|json_script:"stadiums"}}
             {{tournament.get_games|json_script:"games"}}   
-            <script src="{% static 'FinalWhistle/assets/js/map.js'%}"></script>
+            <p id="game_urls" hidden>{% url 'FinalWhistle:match' 0%}</p>
+            <script src="{% static 'FinalWhistle/assets/js/map_poules.js'%}"></script>
             </div>
 
 

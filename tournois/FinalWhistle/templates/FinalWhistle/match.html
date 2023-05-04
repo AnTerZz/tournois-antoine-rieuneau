@@ -63,10 +63,11 @@
     </section>
 
     
-    <div style="height: 1000px; width: 1000px; justify-content: center; align-items: center; margin-left: auto; margin-right: auto">
-        {% include 'FinalWhistle/team_goals.html' with goals_context=goals_context  %}
-    </div>
-
+    <section style="margin-top: -87px;margin-bottom:100px;">
+        <div class="container" style="text-align: center;">
+            {% include 'FinalWhistle/team_goals.html' with goals_context=goals_context  %}
+        </div>
+    </section>
 
     <!--Shows a textarea to submit a new comment if user is authenticated. Prompts the user to login if he is not authenticated-->
     <section style="margin-top: -87px;margin-bottom: 48px;">

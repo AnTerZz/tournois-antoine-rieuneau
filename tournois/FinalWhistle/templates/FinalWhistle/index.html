@@ -1,3 +1,4 @@
+
 {% extends 'FinalWhistle/base.html' %}
 
 
@@ -46,23 +47,54 @@
 
      <!--Search dock-->
      <hr>
-     <div class="float-right pb-3" style="text-align: center;margin-top: 0px;background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
+        <!--show search coin in input-->
+        <style type="text/css">
+            .searchBox{
+            background-image:url({% static 'FinalWhistle/assets/img/search.png'%});
+            background-size:20px;
+            background-repeat:no-repeat;
+            padding-left:25px;
+            background-position:1% 50%;
+            appearance:none;
+            
+            }
+            form{
+            display:inline;
+            }
+        </style>
+        <!--show select coin in select-->
+        <style type="text/css">
+			select{
+				width:100px;
+				height:30px;
+				appearance:none;
+			    -moz-appearance:none;
+			    -webkit-appearance:none;
+				background: url({% static 'FinalWhistle/assets/img/select.png'%}) no-repeat 90% 50%;
+                background-size:14px;
+				font-size:16px;
+                padding-left:3px;
+				color:black;
+			}
+		</style>
+
+     <div class="float-right pb-3" style="text-align: center;margin-top: 0px; margin-left:30px; margin-right:30px; background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
          <form action="{% url 'FinalWhistle:search' %}" method="get">
              <p  style="text-align: center;margin-top:0px;">
                  <div style ="padding-top:30px;padding-bottom:-10px;">
-                     <input type="text" style="width:400px" name="q" placeholder="Search tournament name, location or team name...">
-                     search target:
+                     <input type="text" style="width:410px" name="q" class="searchBox" placeholder="Search tournament name, location or team name...">
+                     Target:
                      <select name="search_mode">
                          <option value="Tournament">Tournoi</option>
                          <option value="Team">Equipe</option>
-                     </select>&nbsp&nbsp&nbsp&nbsp&nbsp
+                     </select>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
                      <!--Show the filter and search button-->
                      <a class="btn btn-black" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-filter" href="#collapse-filter" role="button" >Filter for matches</a>
                      <button type="submit" class="btn btn-gray">Search</button>
                  </div>
              </p>
               <!--Hides the information on each poule in a collapse for better ergonomics-->
-             <div class="row collapse" id="collapse-filter" style="text-align: center;margin-top: 0px;background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
+             <div class="row collapse" id="collapse-filter" style="text-align: center;margin-top: 0px;margin-left:30px; margin-right:30px; background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
                  <p style="margin: 10px">
                      Match date: <input type="date" name="date" id="date"> &nbsp &nbsp
                      Location: <input type="text" style="width:200px" name="location" placeholder="Location...">

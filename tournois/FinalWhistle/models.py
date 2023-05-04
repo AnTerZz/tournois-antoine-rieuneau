@@ -38,21 +38,29 @@ class Poule(models.Model):
     def classement(self):
         return sorted(self.team_set.all(), key = Team.points, reverse=True)
     
+    
+#Model which defines the final rounds in a tournament
 class Round(models.Model):
     match_quantity=models.IntegerField()
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     round_filled= models.IntegerField(default=0)
+    score_filled = models.IntegerField(default=0)
     
     def next_qualified(self):
         list_qualified = []
-        for game in self.game_set.all():
-            if game.home_score == None or game.away_score == None:
-                return []
-            else:
+        if self.score_filled == 1:
+            for game in sorted(self.game_set.all(), key = lambda game : game.date):
                 if game.home_score > game.away_score:
                     list_qualified.append(game.home_team)
                 elif game.home_score < game.away_score:
                     list_qualified.append(game.away_team)
+                else:
+                    if game.tab_home > game.tab_away:
+                        list_qualified.append(game.home_team)
+                    elif game.tab_home < game.tab_away:
+                        list_qualified.append(game.away_team)
+        else:
+            return []
         return list_qualified
     
     
@@ -63,7 +71,7 @@ class Team(models.Model):
     manager = models.CharField(max_length=200)
     players = models.TextField()
     poule = models.ForeignKey(Poule, on_delete=models.CASCADE)
-    round = models.ManyToManyField(Round, null = True)
+    round = models.ManyToManyField(Round, null = True, blank=True)
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     
     #Method to return the players as a list instead of a single string
@@ -94,7 +102,7 @@ class Team(models.Model):
         return (3* won.count() + drawn.count()) 
     
 
-
+#Stores the location of the various stadiums for the map to show
 class Stadium(models.Model):
     name = models.CharField(max_length=200)
     latitude = models.FloatField()
@@ -112,6 +120,8 @@ class Game(models.Model):
     home_score = models.IntegerField(null = True, blank = True)
     away_score = models.IntegerField(null = True, blank = True)
     stadium = models.ForeignKey(Stadium, on_delete=models.CASCADE, null=True)
+    tab_home=models.IntegerField(null = True, blank = True)
+    tab_away=models.IntegerField(null = True, blank = True)
 
 
     def __date__(self):

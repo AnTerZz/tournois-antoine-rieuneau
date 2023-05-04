@@ -22,20 +22,44 @@
         <div class="container">
             <div class="split split-one">
                 {%for round in list_rounds%}
-                    {%if round.match_quantity == 4%}
-                        <div class="round round-one current">
+                    {%if round.match_quantity == 8%}
+                        <div  class="round round-one">
                             {%if round.round_filled == 1%}
                                 <div class="round-details">{{round.match_quantity|title}}<br/></div>
                                 {%for match in round.game_set.all%}
                                     {%if match.away_score != None and match.home_score != None%}
                                         <div class = "current">
-                                            <ul class="matchup">
+                                            <ul style="margin-top:30px" class="matchup">
                                                 <li class="team team-top">{{match.home_team}}<span class="score">{{match.home_score}}</span></li>
                                                 <li class="team team-bottom">{{match.away_team}}<span class="score">{{match.away_score}}</span></li>
                                             </ul>
                                         </div>
                                     {%else%}
-                                        <ul class="matchup">
+                                        <ul style="margin-top:30px" class="matchup">
+                                            <li class="team team-top">{{match.home_team}}<span class="score">0</span></li>
+                                            <li class="team team-bottom">{{match.away_team}}<span class="score">0</span></li>
+                                        </ul>  
+                                    {%endif%}
+                                {%endfor%}
+                                
+                            {%else%}
+                                <p>Previous round not finished yet</p>
+                            {%endif%}
+                        </div>
+                    {%elif round.match_quantity == 4%}
+                        <div style = "margin-left:150px"class="round round-one" >
+                            {%if round.round_filled == 1%}
+                                <div class="round-details">{{round.match_quantity|title}}<br/></div>
+                                {%for match in round.game_set.all%}
+                                    {%if match.away_score != None and match.home_score != None%}
+                                        <div class = "current" >
+                                            <ul style="margin-top:100px" class="matchup">
+                                                <li class="team team-top">{{match.home_team}}<span class="score">{{match.home_score}}</span></li>
+                                                <li class="team team-bottom">{{match.away_team}}<span class="score">{{match.away_score}}</span></li>
+                                            </ul>
+                                        </div>
+                                    {%else%}
+                                        <ul style="margin-top:100px"class="matchup">
                                             <li class="team team-top">{{match.home_team}}<span class="score">0</span></li>
                                             <li class="team team-bottom">{{match.away_team}}<span class="score">0</span></li>
                                         </ul>  
@@ -46,47 +70,49 @@
                             {%endif%}
                         </div>
                     {%elif round.match_quantity == 2%}
-                        <div class="round round-two">
+                        <div style="width:20%; margin-left:130px" class="round round-one" >
                             {%if round.round_filled == 1%}
-                                <div class="round-details">{{round.match_quantity|title}}<br/></div>
+                                <div style = "margin-bottom:-150px; margin-left:150px" class="round-details">{{round.match_quantity|title}}<br/></div>
                                 {%for match in round.game_set.all%}
                                     {%if match.away_score != None and match.home_score != None%}
                                         <div class = "current">
-                                            <ul class="matchup">
+                                            <ul style = "margin-top:300px" class="matchup">
                                                 <li class="team team-top">{{match.home_team}}<span class="score">{{match.home_score}}</span></li>
                                                 <li class="team team-bottom">{{match.away_team}}<span class="score">{{match.away_score}}</span></li>
                                             </ul>
                                         </div>
                                     {%else%}
-                                        <ul class="matchup">
+                                        <ul style = "margin-top:300px" class="matchup">
                                             <li class="team team-top">{{match.home_team}}<span class="score">0</span></li>
                                             <li class="team team-bottom">{{match.away_team}}<span class="score">0</span></li>
                                         </ul>  
                                     {%endif%}
                                 {%endfor%}
+                                
                             {%else%}
                                 <p>Previous round not finished yet</p>
                             {%endif%}
                         </div>
                     {%elif round.match_quantity == 1%}
-                        <div class="round round-three ">
+                        <div style = "margin-left:200px"class="round round-one">
                             {%if round.round_filled == 1%}
                                 <div class="round-details">{{round.match_quantity|title}}<br/></div>
                                 {%for match in round.game_set.all%}
                                     {%if match.away_score != None and match.home_score != None%}
                                         <div class = "current">
-                                            <ul class="matchup">
+                                            <ul style = "margin-top:310px" class="matchup">
                                                 <li class="team team-top">{{match.home_team}}<span class="score">{{match.home_score}}</span></li>
                                                 <li class="team team-bottom">{{match.away_team}}<span class="score">{{match.away_score}}</span></li>
                                             </ul>
                                         </div>
                                     {%else%}
-                                        <ul class="matchup">
-                                            <li class="team team-top">{{match.home_team}}<span class="score">0</span></li>
-                                            <li class="team team-bottom">{{match.away_team}}<span class="score">0</span></li>
+                                        <ul style = "margin-top:310px" class="matchup">
+                                            <li  class="team team-top">{{match.home_team}}<span class="score">0</span></li>
+                                            <li  class="team team-bottom">{{match.away_team}}<span class="score">0</span></li>
                                         </ul>  
                                     {%endif%}
                                 {%endfor%}
+                                
                             {%else%}
                                 <p>Previous round not finished yet</p>
                             {%endif%}
@@ -97,8 +123,5 @@
         </div>
     </section>
 </div>
-
-
-
 </body>
 {%endblock%}

@@ -1,3 +1,4 @@
+from datetime import date
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
 
@@ -246,11 +247,11 @@ def team_goals(pk):
         if game.home_team == team_home:
             scores_home.append(game.home_score)
             opponent_names_home.append(game.away_team.name)
-            game_dates_home.append(game.date)
+            game_dates_home.append(game.date.strftime('%Y-%m-%d'))
         else:
             scores_home.append(game.away_score)
             opponent_names_home.append(game.home_team.name)
-            game_dates_home.append(game.date)
+            game_dates_home.append(game.date.strftime('%Y-%m-%d'))
     score_data_home = json.dumps(scores_home)
     opponent_names_away = []
     game_dates_away = []
@@ -259,11 +260,11 @@ def team_goals(pk):
         if game.home_team == team_away:
             scores_away.append(game.home_score)
             opponent_names_away.append(game.away_team.name)
-            game_dates_away.append(game.date)
+            game_dates_away.append(game.date.strftime('%Y-%m-%d'))
         else:
             scores_away.append(game.away_score)
             opponent_names_away.append(game.home_team.name)
-            game_dates_away.append(game.date)
+            game_dates_away.append(game.date.strftime('%Y-%m-%d'))
     score_data_away = json.dumps(scores_away)
     context = {
         'score_data_home': score_data_home,

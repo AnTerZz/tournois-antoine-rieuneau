@@ -7,7 +7,7 @@
 
 <head>
     <link rel="stylesheet" href="{% static 'FinalWhistle/assets/css/tree.css'%}">
-    </style>
+    
 </head>
 
 
@@ -41,7 +41,7 @@
 
 
             <!--Loops through the poules in a tournament and displays them all-->
-            {% for poule in tournament.poule_set.all %}
+            {% for poule in tournament.poule_set.all|dictsort:"number" %}
                 <div class="row" style="text-align: center;margin-top: 45px;background: rgb(36,40,91);">
                     <div class="col-md-6 text-center">
                         <h1 style="text-align: center;margin: 20px;color: rgb(255,210,0);font-weight: bold;font-size: 36px;">Poule {{poule.number}}</h1>

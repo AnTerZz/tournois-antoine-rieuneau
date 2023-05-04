@@ -17,23 +17,98 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         """Return all the tournaments"""
         return Tournament.objects.order_by('name')
+
+
+#Methode pour creer un match de Round avec les qualifies du Round precedent, qui n'est pas une poule
+def create_match_from_round(nbr_matchs, previous_round, current_round):
+    for j in range(0, nbr_matchs, 2):
+        print(previous_round.next_qualified())
+        team1 = previous_round.next_qualified()[j]
+        team2 = previous_round.next_qualified()[j+1]
+        Game(home_team=team1, away_team=team2,round = current_round).save()
+    current_round.round_filled=1
+    current_round.save()
     
+#Methode pour creer un match de Round avec les qualifies d'une poule
+def create_match_from_poule(tournoi, round):
+    for poule in tournoi.poule_set.all():
+        team1 = poule.classement()[0]
+        team2 = poule.classement()[1]
+        Game(home_team=team1, away_team=team2,round = round).save()
+    round.round_filled=1
+    round.save()
+    
+def TournamentTree(tournoi_id):
+    tournoi = get_object_or_404(Tournament, pk = tournoi_id)
+    nbr_matchs_poules = tournoi.poule_set.all().count()
+    for i in range(0, nbr_matchs_poules):
+        print(i)
+        nbr_matchs=int(nbr_matchs_poules/(2**i))
+        print(nbr_matchs)
+        
+        #Case where the next round is preceded by draws
+        if i == 0:
+            print("previous round is draws")
+            if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
+                print("using existing round")
+                existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
+                if existant_round.round_filled==0:
+                    existant_round.game_set.all().delete()
+                    print("filling round")
+                    create_match_from_poule(tournoi, existant_round)
+                    print(existant_round.round_filled)
+            else:
+                print("creating new round")
+                new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
+                new_round.save()
+                print(new_round)  
+                create_match_from_poule(tournoi, new_round)
+                
+        #Case where the next round isn't preceded by draws
+        else:
+            print("previous round isn't draws")
+            previous_round = Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs*2)[0]
+            if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
+                print("using existing round")
+                
+                existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
+                
+                if existant_round.round_filled==0 and len(previous_round.next_qualified())!=0:
+                    existant_round.game_set.all().delete()
+                    create_match_from_round(nbr_matchs, previous_round, existant_round)
+            else:
+                print("creating new round")
+                new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
+                new_round.save()
+                if len(previous_round.next_qualified())!=0:
+                    create_match_from_round(nbr_matchs, previous_round, new_round)
+                    
+    list_rounds=tournoi.round_set.all()
+    context= {'tournoi':tournoi, 'list_rounds' : list_rounds}
+    return context   
 
 #DetailView which loads the poule template to show all the poules in a tournament and the poule information (games/scores)
 class PouleView(generic.DetailView):
     template_name = 'FinalWhistle/poules.html'
     
     def get_queryset(self):
-        
         return Tournament.objects.order_by('name')
-    
 
     def get_context_data(self, **kwargs):
         context=super(PouleView,self).get_context_data(**kwargs)
         context['tournoi'] = Tournament.objects.get(pk=self.kwargs["pk"])
         tournoi = Tournament.objects.get(pk=self.kwargs["pk"])
         context['list_rounds'] = tournoi.round_set.all()
+        context.update(TournamentTree(self.kwargs["pk"]))
         return context
+    
+    def dispatch(self,request,*args,**kwargs):
+        pk = self.kwargs.get('pk')
+        
+        return super(PouleView,self).dispatch(request, *args, **kwargs)
+    
+    
+    
     
     
 
@@ -81,26 +156,9 @@ class EditCommentView(LoginRequiredMixin, generic.UpdateView):
 def custom_404(request, exception):
     return render(request, 'FinalWhistle/404.html', status=404)
 
-#Methode pour creer un match de Round avec les qualifies du Round precedent, qui n'est pas une poule
-def create_match_from_round(nbr_matchs, previous_round, current_round):
-    for j in range(0, nbr_matchs, 2):
-        team1 = previous_round.next_qualified()[j]
-        team2 = previous_round.next_qualified()[j+1]
-        Game(home_team=team1, away_team=team2,round = current_round).save()
-    current_round.round_filled=1
-    current_round.save()
-    
-#Methode pour creer un match de Round avec les qualifies d'une poule
-def create_match_from_poule(tournoi, round):
-    for poule in tournoi.poule_set.all():
-        team1 = poule.classement()[0]
-        team2 = poule.classement()[1]
-        Game(home_team=team1, away_team=team2,round = round).save()
-    round.round_filled=1
-    round.save()
 
 #Vue de l'arborescence des matchs d'un tournoi
-def TournamentTree(request, tournoi_id):
+def TournamentTree(tournoi_id):
     tournoi = get_object_or_404(Tournament, pk = tournoi_id)
     nbr_matchs_poules = tournoi.poule_set.all().count()
     for i in range(0, nbr_matchs_poules):
@@ -115,7 +173,6 @@ def TournamentTree(request, tournoi_id):
                 print("using existing round")
                 existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
                 if existant_round.round_filled==0:
-                    existant_round.game_set.all().delete()
                     print("filling round")
                     create_match_from_poule(tournoi, existant_round)
                     print(existant_round.round_filled)
@@ -135,8 +192,7 @@ def TournamentTree(request, tournoi_id):
                 
                 existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
                 
-                if existant_round.round_filled==0 and previous_round.next_qualified() != None:
-                    existant_round.game_set.all().delete()
+                if existant_round.round_filled==0 and len(previous_round.next_qualified()) != 0:
                     create_match_from_round(nbr_matchs, previous_round, existant_round)
             else:
                 print("creating new round")
@@ -146,7 +202,8 @@ def TournamentTree(request, tournoi_id):
                     create_match_from_round(nbr_matchs, previous_round, new_round)
                     
     list_rounds=tournoi.round_set.all()
-    return render(request, 'FinalWhistle/tree.html', context= {'tournoi':tournoi, 'list_rounds' : list_rounds})
+    context= {'tournoi':tournoi, 'list_rounds' : list_rounds}
+    return context
                     
         
                        
@@ -189,11 +246,11 @@ def team_goals(pk):
         if game.home_team == team_home:
             scores_home.append(game.home_score)
             opponent_names_home.append(game.away_team.name)
-            game_dates_home.append(game.date.strftime("%b %d, %Y"))
+            game_dates_home.append(game.date)
         else:
             scores_home.append(game.away_score)
             opponent_names_home.append(game.home_team.name)
-            game_dates_home.append(game.date.strftime("%b %d, %Y"))
+            game_dates_home.append(game.date)
     score_data_home = json.dumps(scores_home)
     opponent_names_away = []
     game_dates_away = []
@@ -202,11 +259,11 @@ def team_goals(pk):
         if game.home_team == team_away:
             scores_away.append(game.home_score)
             opponent_names_away.append(game.away_team.name)
-            game_dates_away.append(game.date.strftime("%b %d, %Y"))
+            game_dates_away.append(game.date)
         else:
             scores_away.append(game.away_score)
             opponent_names_away.append(game.home_team.name)
-            game_dates_away.append(game.date.strftime("%b %d, %Y"))
+            game_dates_away.append(game.date)
     score_data_away = json.dumps(scores_away)
     context = {
         'score_data_home': score_data_home,

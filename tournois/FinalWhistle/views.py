@@ -31,10 +31,14 @@ def create_match_from_round(nbr_matchs, previous_round, current_round):
     
 #Methode pour creer un match de Round avec les qualifies d'une poule
 def create_match_from_poule(tournoi, round):
+    team1 = []
+    team2 = []
     for poule in tournoi.poule_set.all():
-        team1 = poule.classement()[0]
-        team2 = poule.classement()[1]
-        Game(home_team=team1, away_team=team2,round = round).save()
+        team1.append(poule.classement()[0])
+        team2.append(poule.classement()[1])
+    Game(home_team=team1[len(team1)-1], away_team=team2[0], round=round).save()
+    for i in range(0,len(team1)-1):
+        Game(home_team=team1[i], away_team=team2[i+1],round = round).save()
     round.round_filled=1
     round.save()
     
@@ -62,9 +66,7 @@ def TournamentTree(tournoi_id):
                 print("creating new round draws")
                 new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
                 new_round.save() 
-                print("ok")
                 create_match_from_poule(tournoi, new_round)
-                print("ok2")
                 
         #Case where the next round isn't preceded by draws
         else:

@@ -38,6 +38,8 @@ class Poule(models.Model):
     def classement(self):
         return sorted(self.team_set.all(), key = Team.points, reverse=True)
     
+    
+#Model which defines the final rounds in a tournament
 class Round(models.Model):
     match_quantity=models.IntegerField()
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
@@ -100,7 +102,7 @@ class Team(models.Model):
         return (3* won.count() + drawn.count()) 
     
 
-
+#Stores the location of the various stadiums for the map to show
 class Stadium(models.Model):
     name = models.CharField(max_length=200)
     latitude = models.FloatField()

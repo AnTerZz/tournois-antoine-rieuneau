@@ -1,7 +1,5 @@
 {% extends 'FinalWhistle/base.html' %}
 
-
-
 {%load static%}
 {%load rounds%}
 
@@ -101,14 +99,16 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="row collapse" id="collapse-tree" style="text-align: center;margin-top: 0px;background: #eefdff;">
-                            
+                    <!--Includes the round tree-->
+                    <div class="row collapse" id="collapse-tree" style="text-align: center;margin-top: 0px;background: #eefdff;">
+                        <script>
+                            console.log('This is a message logged to the console.');
+                        </script>
                             {% include 'FinalWhistle/tree.html' with tournoi=tournament list_round=tournament.round_set.all%}
-                        
-                </div>
-
+                            
+                    </div>
             
+                <!--Includes the plot views in this template-->
                 <div class="row" style="text-align: center; margin-top: 70px">
                     <div class="col-md-6 text-center">
                         {% include 'FinalWhistle/scatter_plot.html' %}

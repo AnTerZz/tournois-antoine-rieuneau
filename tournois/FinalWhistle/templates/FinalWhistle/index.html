@@ -44,37 +44,37 @@
         </div>
     </header>
 
-    <!--Search dock-->
-    <hr>
-    <div class="float-right pb-3" style="text-align: center;margin-top: 0px;background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
-        <form action="{% url 'FinalWhistle:search' %}" method="get">
-            <p  style="text-align: center;margin-top:0px;">
-                <div style ="padding-top:30px;padding-bottom:-10px;">
-                    <input type="text" style="width:400px" name="q" placeholder="Search tournament name, location or team name...">
-                    search target:
-                    <select name="search_mode">
-                        <option value="Tournament">Tournoi</option>
-                        <option value="Team">Equipe</option>
-                        <option value="Game">Match</option>
-                    </select>&nbsp&nbsp&nbsp&nbsp&nbsp
-                    <!--Show the filter and search button-->
-                    <a class="btn btn-black" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-filter" href="#collapse-filter" role="button" >Filter for matches</a>
-                    <button type="submit" class="btn btn-gray">Search</button>
-                </div>
-            </p>
-             <!--Hides the information on each poule in a collapse for better ergonomics-->
-            <div class="row collapse" id="collapse-filter" style="text-align: center;margin-top: 0px;background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
-                <p style="margin: 10px">
-                    Match date: <input type="date" name="date" id="date"> &nbsp &nbsp
-                    Match lieu: <input type="text" name="location" placeholder="Location">
-                </p>
-                <p style="margin: 10px">
-                    Les équipes: <input type="text" name="home_team" placeholder="Home team"> vs <input type="text" name="away_team" placeholder="Away team"> &nbsp &nbsp
-                    Les scores: <input type="number" name="home_score" placeholder="Home score"> vs <input type="number" name="away_score" placeholder="Away score">
-                </p>
-            </div>
-        </form>
-    </div>
+     <!--Search dock-->
+     <hr>
+     <div class="float-right pb-3" style="text-align: center;margin-top: 0px;background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
+         <form action="{% url 'FinalWhistle:search' %}" method="get">
+             <p  style="text-align: center;margin-top:0px;">
+                 <div style ="padding-top:30px;padding-bottom:-10px;">
+                     <input type="text" style="width:400px" name="q" placeholder="Search tournament name, location or team name...">
+                     search target:
+                     <select name="search_mode">
+                         <option value="Tournament">Tournoi</option>
+                         <option value="Team">Equipe</option>
+                     </select>&nbsp&nbsp&nbsp&nbsp&nbsp
+                     <!--Show the filter and search button-->
+                     <a class="btn btn-black" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-filter" href="#collapse-filter" role="button" >Filter for matches</a>
+                     <button type="submit" class="btn btn-gray">Search</button>
+                 </div>
+             </p>
+              <!--Hides the information on each poule in a collapse for better ergonomics-->
+             <div class="row collapse" id="collapse-filter" style="text-align: center;margin-top: 0px;background: linear-gradient(-25deg, #fffbe7 0%, var(--ref-gray-100));">
+                 <p style="margin: 10px">
+                     Match date: <input type="date" name="date" id="date"> &nbsp &nbsp
+                     Location: <input type="text" style="width:200px" name="location" placeholder="Location...">
+                     Stadium: <input type="text" style="width:200px" name="stadium" placeholder="stadium...">
+                 </p>
+                 <p style="margin: 10px">
+                     Les équipes: <input type="text" name="home_team" placeholder="Home team"> vs <input type="text" name="away_team" placeholder="Away team"> &nbsp &nbsp
+                     Les scores: <input type="number" name="home_score" placeholder="Home score"> vs <input type="number" name="away_score" placeholder="Away score">
+                 </p>
+             </div>
+         </form>
+     </div>
 
 
     <!--Loops through all tournaments and displays the first 3, the rest is displayed in a collapse which can be activated by pressing a view more button-->

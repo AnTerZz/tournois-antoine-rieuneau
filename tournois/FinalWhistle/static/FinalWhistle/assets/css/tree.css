@@ -17,7 +17,7 @@
 .tree-container .matchup {margin:0;width: 100%;padding: 10px 0;height:60px;-webkit-transition: all 0.2s;transition: all 0.2s;}
 .tree-container .score {font-size: 11px;text-transform: uppercase;float: right;color: #2C7399;font-weight: bold;font-family: 'Roboto Condensed', sans-serif;position: absolute;right: 5px;}
 .tree-container .team {padding: 0 5px;margin: 3px 0;height: 25px; line-height: 25px;white-space: nowrap; overflow: hidden;position: relative;}
-.tree-container .round-one .matchup {margin:0; height: 60px;padding: 0px 0;}
+.tree-container .round-one .matchup {width:240%; margin:0; height: 60px;padding: 0px 0;}
 .tree-container .round-two .matchup {margin:0; height: 60px;padding: 50px 0;}
 .tree-container .round-three .matchup {margin:0; height: 60px; padding: 130px 0;}
 .tree-container .round-four .matchup {margin:0; height: 60px; padding: 130px 0;}

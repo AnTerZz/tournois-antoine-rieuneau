@@ -50,47 +50,48 @@ def TournamentTree(tournoi_id):
     tournoi = get_object_or_404(Tournament, pk = tournoi_id)
     nbr_matchs_poules = tournoi.poule_set.all().count()
     print(int(math.log2(nbr_matchs_poules)))
-    for i in range(0, int(math.log2(nbr_matchs_poules)+1)):
-        print(i)
-        nbr_matchs=int(nbr_matchs_poules/(2**i))
-        print(nbr_matchs)
-        
-        #Case where the next round is preceded by draws
-        if i == 0:
-            print("previous round is draws")
-            if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
-                print("using existing round")
-                existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
-                
-                if existant_round.round_filled==0:
-                    existant_round.game_set.all().delete()
-                    print("filling round")
-                    create_match_from_poule(tournoi, existant_round)
-                    print(existant_round.round_filled)
+    if nbr_matchs_poules > 0:
+        for i in range(0, int(math.log2(nbr_matchs_poules)+1)):
+            print(i)
+            nbr_matchs=int(nbr_matchs_poules/(2**i))
+            print(nbr_matchs)
+            
+            #Case where the next round is preceded by draws
+            if i == 0:
+                print("previous round is draws")
+                if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
+                    print("using existing round")
+                    existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
+                    
+                    if existant_round.round_filled==0:
+                        existant_round.game_set.all().delete()
+                        print("filling round")
+                        create_match_from_poule(tournoi, existant_round)
+                        print(existant_round.round_filled)
+                else:
+                    print("creating new round draws")
+                    new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
+                    new_round.save() 
+                    create_match_from_poule(tournoi, new_round)
+                    
+            #Case where the next round isn't preceded by draws
             else:
-                print("creating new round draws")
-                new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
-                new_round.save() 
-                create_match_from_poule(tournoi, new_round)
-                
-        #Case where the next round isn't preceded by draws
-        else:
-            print("previous round isn't draws")
-            previous_round = Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs*2)[0]
-            if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
-                print("using existing round")
-                existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
-                
-                if existant_round.round_filled==0 and len(previous_round.next_qualified())!=0:
-                    existant_round.game_set.all().delete()
-                    create_match_from_round(nbr_matchs, previous_round, existant_round)
-            else:
-                print("creating new round")
-                new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
-                new_round.save()
-                print(len(previous_round.next_qualified()))
-                if len(previous_round.next_qualified())!=0:
-                    create_match_from_round(nbr_matchs, previous_round, new_round)
+                print("previous round isn't draws")
+                previous_round = Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs*2)[0]
+                if Round.objects.filter(tournament=tournoi, match_quantity=nbr_matchs).exists():
+                    print("using existing round")
+                    existant_round = Round.objects.get(tournament=tournoi, match_quantity=nbr_matchs)
+                    
+                    if existant_round.round_filled==0 and len(previous_round.next_qualified())!=0:
+                        existant_round.game_set.all().delete()
+                        create_match_from_round(nbr_matchs, previous_round, existant_round)
+                else:
+                    print("creating new round")
+                    new_round = Round(match_quantity=nbr_matchs, tournament=tournoi)
+                    new_round.save()
+                    print(len(previous_round.next_qualified()))
+                    if len(previous_round.next_qualified())!=0:
+                        create_match_from_round(nbr_matchs, previous_round, new_round)
                     
     list_rounds=sorted(tournoi.round_set.all(), key = lambda round : round.match_quantity, reverse = True)
     context= {'tournoi':tournoi, 'list_rounds' : list_rounds}

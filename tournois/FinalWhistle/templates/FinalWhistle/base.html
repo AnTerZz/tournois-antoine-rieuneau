@@ -11,10 +11,39 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;display=swap">
     <link rel="stylesheet" href="{% static 'FinalWhistle/assets/css/animate.min.css'%}">
     <link rel="stylesheet" href="{% static 'FinalWhistle/assets/css/Footer-Basic-icons.css'%}">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+     integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+     crossorigin=""/>
+     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+     crossorigin=""></script>
+
 </head>
+
+<body>
+    <nav class="navbar navbar-light navbar-expand-md fixed-top navbar-shrink py-3" id="mainNav">
+        <div class="container"><img class="img-fluid" data-bss-hover-animate="bounce" src="{% static 'FinalWhistle/assets/img/logocolours.png'%}" width="146" height="77" style="margin-bottom: 14px;width: 150px;"><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="navbar-nav mx-auto">
+                    {%block nav_items%}
+                    {%endblock%}
+                </ul>
+
+                <!--Displays a deconnection button if user is authenticated and a connection button if not-->
+                {% if user.is_authenticated %}
+                    <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
+                    <a class="btn btn-outline-primary shadow" role="button" href="{% url 'logout' %}?next={{ request.path }}">Déconnexion</a>
+                {% else %}
+                    <a class="btn btn-primary shadow" role="button" href="{% url 'login' %}?next={{ request.path }}">Connexion</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
 
 {% block content %}
 {% endblock %}
+</body>
 
 <footer style="margin-top: -125px;">
     <div class="container py-4 py-lg-5">

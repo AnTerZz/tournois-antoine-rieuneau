@@ -13,6 +13,7 @@
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:index' %}">Tournois</a></li>
                 </ul>
+                <!--Displays a deconnection button if user is authenticated and a connection button if not-->
                 {% if user.is_authenticated %}
                     <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
                     <a class="btn btn-outline-primary shadow" role="button" href="{% url 'logout' %}?next={% url 'FinalWhistle:index' %}">Déconnexion</a>
@@ -25,7 +26,7 @@
     <section class="py-5 mt-5">
         <div class="container">
             <div class="row row-cols-1 d-flex justify-content-center align-items-center" style="padding: 0;padding-bottom: 0;">
-                <div class="col-md-10 text-center"><img class="img-fluid" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="100" data-aos-once="true" src="" style="padding: 12px;padding-bottom: 46px;padding-top: 21px;"></div>
+                <div class="col-md-10 text-center"><img class="img-fluid" data-aos="zoom-in" data-aos-duration="600" data-aos-delay="100" data-aos-once="true" src="{% static 'FinalWhistle/assets/img/illustrations/404.png'%}" style="padding: 12px;padding-bottom: 46px;padding-top: 21px;"></div>
                 <div class="col text-center">
                     <h2 class="display-3 fw-bold mb-4">Je demande la VAR</h2>
                     <p class="fs-4 text-muted">Pourquoi l'équipe de football avait-elle toujours une page d'erreur 404 sur son site web ?<br><br>Parce que le dev avait été transféré dans une autre équipe et personne ne pouvait le retrouver pour corriger le bug !</p>

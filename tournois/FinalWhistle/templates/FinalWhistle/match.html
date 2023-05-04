@@ -3,27 +3,15 @@
 
 
 {%load static%}
+
+
+{% block nav_items %}
+    <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:index' %}">Tournoi</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:poule' game.poule.tournament.id%}">Poules</a></li>
+    <li class="nav-item"><a class="nav-link active" href="">Equipes</a></li>
+{% endblock %}
+
 {% block content %}
-
-
-<body>
-    <nav class="navbar navbar-light navbar-expand-md fixed-top navbar-shrink py-3" id="mainNav">
-        <div class="container"><img class="img-fluid" data-bss-hover-animate="bounce" src="{% static 'FinalWhistle/assets/img/logocolours.png'%}" width="146" height="77" style="margin-bottom: 14px;width: 150px;"><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse" id="navcol-1">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:index' %}">Tournoi</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:poule' game.poule.tournament.id%}">Poules</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="">Equipes</a></li>
-                </ul>
-                {% if user.is_authenticated %}
-                    <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
-                    <a class="btn btn-outline-primary shadow" role="button" href="{% url 'logout' %}?next={% url 'FinalWhistle:index' %}">Déconnexion</a>
-                {% else %}
-                    <a class="btn btn-primary shadow" role="button" href="{% url 'login' %}?next={% url 'FinalWhistle:index' %}">Connexion</a>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
     <section class="py-4 py-md-5 my-5">
         <div class="row" style="text-align: center;margin-top: 45px;background: var(--bs-link-hover-color);">
             <div class="col">
@@ -34,13 +22,21 @@
             <div class="row" style="text-align: center;">
                 <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5 text-center text-md-start">
                     <h2 class="display-6 fw-bold mb-5" style="text-align: center;margin-top: 29px;"><span class="underline pb-1" style="text-align: center;font-size: 30.89px;"></span></h2>
-                    <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Lieu : </span>{{game.location}}</p>
+                    <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Lieu : </span>{{game.stadium}}</p>
                     <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Date :</span> {{game.date}}</p>
                     <p style="text-align: center;margin-bottom: 15px;"><span style="font-weight: bold;">Tournoi : </span>{{game.poule.tournament}}</p>
                     <p style="text-align: center;margin-bottom: 0px;"><span style="font-weight: bold;">Poule :</span> {{game.poule}}</p>
                 </div>
                 <div class="col-md-6 text-center"><img class="img-fluid w-100" src="{% static 'FinalWhistle/assets/img/illustrations/match2.png'%}" /></div>
             </div>
+
+            <div id="map" class="row" style="text-align: center; height:300px">
+
+                {{game.get_stadium|json_script:"stadiums"}}
+                    
+                <script src="{% static 'FinalWhistle/assets/js/map.js'%}"></script>
+            </div>
+
             <div class="row" style="text-align: center;margin-top: 45px;background: rgb(36,40,91);">
                 <div class="col">
                     <h1 style="color: var(--bs-yellow);font-weight: bold;">{{game.home_team}}</h1>
@@ -66,8 +62,14 @@
         </div>
     </section>
 
+    
+    <section style="margin-top: -87px;margin-bottom:100px;">
+        <div class="container" style="text-align: center;">
+            {% include 'FinalWhistle/team_goals.html' with goals_context=goals_context  %}
+        </div>
+    </section>
 
-
+    <!--Shows a textarea to submit a new comment if user is authenticated. Prompts the user to login if he is not authenticated-->
     <section style="margin-top: -87px;margin-bottom: 48px;">
         <div class="container" style="text-align: center;">
             {% if user.is_authenticated %}
@@ -85,20 +87,18 @@
                         <h2 class="fw-bold text-warning mb-2">Envie de donner votre avis sur un match ?</h2>
                         <p class="mb-0">Connectez vous pour pouvoir le faire !</p>
                     </div>
-                    <div class="my-2"><a class="btn btn-light fs-5 py-2 px-4" role="button" href="{% url 'login' %}?next={% url 'FinalWhistle:index' %}">Connexion</a></div>
+                    <div class="my-2"><a class="btn btn-light fs-5 py-2 px-4" role="button" href="{% url 'login' %}?next={{ request.path }}">Connexion</a></div>
                 </div>
             {% endif %}
 
 
-
-
-
-            
+            <!--Loops through comments on a match to display them-->
             {% for comment in comments %}
                 <div class="col" style="width: 800px;margin: auto;">
                     <h1 style="text-align: left;color: var(--bs-indigo);font-weight: bold;font-size: 24.89px;">{{comment.user}}<span style="margin-left: 12px;color: var(--bs-gray);font-size: 16.89px;text-align: center;">{{comment.date}}
                         <!--<span style="margin-left: 11px;font-size: 12.89px;color: var(--bs-red);">edit</span>-->
                     
+                    <!--If the user has posted a comment, allows him to edit it-->
                     {% if user == comment.user %}
                         <a href="{% url 'FinalWhistle:edit_comment' comment.id %}" style="margin-left: 11px;font-size: 12.89px;color: var(--bs-red);">edit</a>
                     {% endif %}

@@ -3,87 +3,121 @@
 
 
 {%load static%}
+{%load rounds%}
+
+<head>
+    <link rel="stylesheet" href="{% static 'FinalWhistle/assets/css/tree.css'%}">
+    
+</head>
+
+
+
+{% block nav_items %}
+    <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:index' %}">Tournoi</a></li>
+    <li class="nav-item"><a class="nav-link active" href="">Poules</a></li>
+{% endblock %}
+
 {% block content %}
-
-
-<body>
-    <nav class="navbar navbar-light navbar-expand-md fixed-top navbar-shrink py-3" id="mainNav">
-        <div class="container"><img class="img-fluid" data-bss-hover-animate="bounce" src="{% static 'FinalWhistle/assets/img/logocolours.png'%}" width="146" height="77" style="margin-bottom: 14px;width: 150px;"><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse" id="navcol-1">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'FinalWhistle:index' %}">Tournoi</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="">Poules</a></li>
-
-                </ul>
-                {% if user.is_authenticated %}
-                    <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
-                    <a class="btn btn-outline-primary shadow" role="button" href="{% url 'logout' %}?next={% url 'FinalWhistle:index' %}">Déconnexion</a>
-                {% else %}
-                    <a class="btn btn-primary shadow" role="button" href="{% url 'login' %}?next={% url 'FinalWhistle:index' %}">Connexion</a>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
     <section class="py-4 py-md-5 my-5">
         <div class="container py-md-5" style="text-align: center;">
             <div class="row" style="text-align: center;">
                 <div class="col-md-6 text-center"><img class="img-fluid w-100" src="{% static 'FinalWhistle/assets/img/illustrations/matchedit.png'%}"></div>
-                <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5 text-center text-md-start shake animated">
-                    <h2 class="display-6 fw-bold mb-5" style="text-align: center;margin-top: 20px;"><span class="shake animated underline pb-1" style="text-align: center;">{{tournament.name}}</span></h2>
-                    <p style="text-align: center;">Lieu : {{tournament.location}}</p>
-                    <p style="text-align: center;">Dates : {{tournament.date_start}} - {{tournament.date_end}}</p>
-                    <p style="text-align: center;">Nombre de poules: {{tournament.nPoules}}</p>
-                    <p style="text-align: center;">Nombre d'équipes par poules: {{tournament.nTeamsInPoule}}</p>
+                    <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5 text-center text-md-start shake animated">
+                        <h2 class="display-6 fw-bold mb-5" style="text-align: center;margin-top: 20px;"><span class="shake animated underline pb-1" style="text-align: center;">{{tournament.name}}</span></h2>
+                        <p style="text-align: center;">Lieu : {{tournament.location}}</p>
+                        <p style="text-align: center;">Dates : {{tournament.date_start}} - {{tournament.date_end}}</p>
+                        <p style="text-align: center;">Nombre de poules: {{tournament.nPoules}}</p>
+                        <p style="text-align: center;">Nombre d'équipes par poules: {{tournament.nTeamsInPoule}}</p>
+                    </div>
                 </div>
-            </div>
+            
 
-            {% for poule in tournament.poule_set.all %}
+                <div id="map" class="row leaflet-gl-layer maplibregl-map mapboxgl-map" style="text-align: center; height:300px">
+
+                    {{tournament.get_stadiums|json_script:"stadiums"}}
+                    {{tournament.get_games|json_script:"games"}}   
+                    <script src="{% static 'FinalWhistle/assets/js/map.js'%}"></script>
+                </div>
+
+
+                <!--Loops through the poules in a tournament and displays them all-->
+                {% for poule in tournament.poule_set.all|dictsort:"number" %}
+                    <div class="row" style="text-align: center;margin-top: 45px;background: rgb(36,40,91);">
+                        <div class="col-md-6 text-center">
+                            <h1 style="text-align: center;margin: 20px;color: rgb(255,210,0);font-weight: bold;font-size: 36px;">Poule {{poule.number}}</h1>
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5 text-center text-md-start">
+                            <div style="text-align: center;"><a class="btn btn-light" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-{{ poule.id }}" href="#collapse-{{ poule.id }}" role="button" style="margin: 20px;">Voir plus</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Hides the information on each poule in a collapse for better ergonomics-->
+                    <div class="row collapse" id="collapse-{{ poule.id }}" style="text-align: center;margin-top: 0px;background: #eefdff;">
+                        <div class="col-md-6 text-center" style="margin: auto">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Equipe</th>
+                                            <th>Points</th>
+                                            <th>Marqués</th>
+                                            <th>Concédés</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for team in poule.team_set.all %}
+                                            <tr>
+                                                <td>{{team.name}}</td>
+                                                <td>{{team.points}}</td>
+                                                <td>{{team.goals_scored}}</td>
+                                                <td>{{team.goals_conceded}}</td>
+                                            </tr>
+                                        {%endfor%}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div>
+                                {% for game in poule.game_set.all %}
+                                    <div class="col"><a class="link-primary" href="{% url 'FinalWhistle:match' game.id %}" style="font-weight: bold;font-size: 24px;color: var(--bs-blue);"><span style="font-size: 32px;color: rgb(0,0,0);">{{game.home_score}}&nbsp;</span>{{game.home_team}} - {{game.away_team}}</a><span style="font-weight: bold;font-size: 32px;color: rgb(0,0,0);">&nbsp;{{game.away_score}}</span>
+                                        <p><span style="font-weight: bold;">Lieu :&nbsp;</span>{{game.stadium}}</p>
+                                        <p style="margin-top: -23px;"><span style="font-weight: bold;">Date :&nbsp;</span>{{game.date}}</p>
+                                    </div>
+                                {%endfor%}
+                            </div>
+                        </div>
+                    </div>
+                {%endfor%}
+
+
                 <div class="row" style="text-align: center;margin-top: 45px;background: rgb(36,40,91);">
                     <div class="col-md-6 text-center">
-                        <h1 style="text-align: center;margin: 20px;color: rgb(255,210,0);font-weight: bold;font-size: 36px;">Poule {{poule.number}}</h1>
+                        <h1 style="text-align: center;margin: 20px;color: rgb(255,210,0);font-weight: bold;font-size: 36px;">Phases Eliminatoires</h1>
                     </div>
                     <div class="col-sm-12 col-md-6 col-lg-5 col-xl-5 text-center text-md-start">
-                        <div style="text-align: center;"><a class="btn btn-light" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-{{ poule.id }}" href="#collapse-{{ poule.id }}" role="button" style="margin: 20px;">Voir plus</a>
+                        <div style="text-align: center;"><a class="btn btn-light" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapse-tree" href="#collapse-tree" role="button" style="margin: 20px;">Voir plus</a>
                         </div>
                     </div>
                 </div>
-                <div class="row collapse" id="collapse-{{ poule.id }}" style="text-align: center;margin-top: 0px;background: #eefdff;">
+
+                <div class="row collapse" id="collapse-tree" style="text-align: center;margin-top: 0px;background: #eefdff;">
+                            
+                            {% include 'FinalWhistle\tree.html' with tournoi=tournament list_round=tournament.round_set.all%}
+                        
+                </div>
+
+            
+                <div class="row" style="text-align: center; margin-top: 70px">
                     <div class="col-md-6 text-center">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Equipe</th>
-                                        <th>Points</th>
-                                        <th>Marqués</th>
-                                        <th>Concédés</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for team in poule.team_set.all %}
-                                        <tr>
-                                            <td>{{team.name}}</td>
-                                            <td>{{team.points}}</td>
-                                            <td>{{team.goals_scored}}</td>
-                                            <td>{{team.goals_conceded}}</td>
-                                        </tr>
-                                    {%endfor%}
-                                </tbody>
-                            </table>
-                        </div>
+                        {% include 'FinalWhistle/scatter_plot.html' %}
                     </div>
-                    <div class="col">
-                        <div>
-                            {% for game in poule.game_set.all %}
-                                <div class="col"><a class="link-primary" href="{% url 'FinalWhistle:match' game.id %}" style="font-weight: bold;font-size: 24px;color: var(--bs-blue);"><span style="font-size: 32px;color: rgb(0,0,0);">{{game.home_score}}&nbsp;</span>{{game.home_team}} - {{game.away_team}}</a><span style="font-weight: bold;font-size: 32px;color: rgb(0,0,0);">&nbsp;{{game.away_score}}</span>
-                                    <p><span style="font-weight: bold;">Lieu :&nbsp;</span>{{game.location}}</p>
-                                    <p style="margin-top: -23px;"><span style="font-weight: bold;">Date :&nbsp;</span>{{game.date}}</p>
-                                </div>
-                            {%endfor%}
-                        </div>
+                    <div class="col-md-6 text-center">
+                        {% include 'FinalWhistle/goal_plot.html' %}
                     </div>
                 </div>
-            {%endfor%}
+            </div>
         </div>
     </section>
 

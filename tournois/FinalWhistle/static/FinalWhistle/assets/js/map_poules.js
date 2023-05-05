@@ -14,7 +14,8 @@ if(game_element){
     var game_list = []
 }
 
-
+var game_urls = document.getElementById('game_urls').textContent.slice(0,-1);
+  
 //Sorting of the games by stadium and by poule
 var game_by_poule_stadium = {}
 var game_by_stadium = {}
@@ -60,7 +61,7 @@ function format_string(stadium, game_list) {
     str += "<ul>";
     for(const game of game_list){
         if(game.stadium==stadium.id){
-            str += `<li>${game.home_team__name} vs ${game.away_team__name}</li>`;
+            str += `<li><a  href=${game_urls}${game.id}>${game.home_team__name} vs ${game.away_team__name}</a></li>`;
         }
     }
     str += "</ul>";

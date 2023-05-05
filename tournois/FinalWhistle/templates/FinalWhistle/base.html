@@ -30,7 +30,7 @@
                     {%endblock%}
                 </ul>
 
-                <!--Displays a deconnection button if user is authenticated and a connection button if not-->
+                <!--Displays a deconnection button if user is authenticated and a connection button  if not-->
                 {% if user.is_authenticated %}
                     <p class="navbar-text" style="margin-right: 17px;margin-top: 19px;">Bonjour, {{ user.username }}</p>
                     <a class="btn btn-outline-primary shadow" role="button" href="{% url 'logout' %}?next={{ request.path }}">Déconnexion</a>

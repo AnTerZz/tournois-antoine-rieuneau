@@ -32,10 +32,12 @@
 
                 <div id="map" class="row leaflet-gl-layer maplibregl-map mapboxgl-map" style="text-align: center; height:300px">
 
-                    {{tournament.get_stadiums|json_script:"stadiums"}}
-                    {{tournament.get_games|json_script:"games"}}   
-                    <script src="{% static 'FinalWhistle/assets/js/map.js'%}"></script>
-                </div>
+            {{tournament.get_stadiums|json_script:"stadiums"}}
+            {{tournament.get_games|json_script:"games"}}   
+            <p id="game_urls" hidden>{% url 'FinalWhistle:match' 0%}</p>
+            <script src="{% static 'FinalWhistle/assets/js/map_poules.js'%}"></script>
+            </div>
+
 
 
                 <!--Loops through the poules in a tournament and displays them all-->
